@@ -5,6 +5,11 @@ using NAuth.DTO.Settings;
 using NAuth.Maui.Services;
 using NAuth.Maui.ViewModels;
 using NAuth.Maui.Views;
+using NNews.ACL;
+using NNews.Dtos.Settings;
+using NNews.Maui.Services;
+using NNews.Maui.ViewModels;
+using NNews.Maui.Views;
 using System.Net.Http.Headers;
 
 namespace Abipesca.Main
@@ -27,14 +32,14 @@ namespace Abipesca.Main
             builder.Logging.SetMinimumLevel(LogLevel.Debug);
 #endif
 
-            // Configure HttpClient with UserAgent and default settings
+            // Configure HttpClient for NAuth with UserAgent and default settings
             builder.Services.AddHttpClient<UserClient>((serviceProvider, client) =>
             {
                 var settings = serviceProvider.GetRequiredService<IOptions<NAuthSetting>>().Value;
                 var logger = serviceProvider.GetRequiredService<ILogger<UserClient>>();
                 
-                var apiUrl = GetApiUrl();
-                logger.LogInformation("Configuring API URL: {ApiUrl}", apiUrl);
+                var apiUrl = GetNAuthApiUrl();
+                logger.LogInformation("Configuring NAuth API URL: {ApiUrl}", apiUrl);
                 
                 client.BaseAddress = new Uri(apiUrl);
                 
@@ -53,20 +58,62 @@ namespace Abipesca.Main
                 logger.LogInformation("Fingerprint: {Fingerprint}", fingerprint);
             });
 
-            // Configure default HttpClient for other services
-            builder.Services.AddHttpClient();
+            // Configure HttpClient for NNews ArticleClient
+            builder.Services.AddHttpClient<ArticleClient>((serviceProvider, client) =>
+            {
+                var apiUrl = GetNNewsApiUrl();
+                var logger = serviceProvider.GetRequiredService<ILogger<ArticleClient>>();
+                
+                logger.LogInformation("Configuring NNews Article API URL: {ApiUrl}", apiUrl);
+                
+                client.BaseAddress = new Uri(apiUrl);
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.Timeout = TimeSpan.FromSeconds(30);
+            });
+
+            // Configure HttpClient for NNews CategoryClient
+            builder.Services.AddHttpClient<CategoryClient>((serviceProvider, client) =>
+            {
+                var apiUrl = GetNNewsApiUrl();
+                var logger = serviceProvider.GetRequiredService<ILogger<CategoryClient>>();
+                
+                logger.LogInformation("Configuring NNews Category API URL: {ApiUrl}", apiUrl);
+                
+                client.BaseAddress = new Uri(apiUrl);
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.Timeout = TimeSpan.FromSeconds(30);
+            });
+
+            // Configure HttpClient for NNews TagClient
+            builder.Services.AddHttpClient<TagClient>((serviceProvider, client) =>
+            {
+                var apiUrl = GetNNewsApiUrl();
+                var logger = serviceProvider.GetRequiredService<ILogger<TagClient>>();
+                
+                logger.LogInformation("Configuring NNews Tag API URL: {ApiUrl}", apiUrl);
+                
+                client.BaseAddress = new Uri(apiUrl);
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.Timeout = TimeSpan.FromSeconds(30);
+            });
 
             // Configure NAuth Settings
             builder.Services.Configure<NAuthSetting>(options =>
             {
-                options.ApiUrl = GetApiUrl();
+                options.ApiUrl = GetNAuthApiUrl();
             });
 
-            // Register application services
+            // Configure NNews Settings
+            builder.Services.Configure<NNewsSetting>(options =>
+            {
+                options.ApiUrl = GetNNewsApiUrl();
+            });
+
+            // Register NAuth application services
             builder.Services.AddSingleton<IAuthService, AuthService>();
             builder.Services.AddSingleton<IUserService, UserService>();
 
-            // Register ViewModels
+            // Register NAuth ViewModels
             builder.Services.AddTransient<LoginViewModel>();
             builder.Services.AddTransient<RegisterViewModel>();
             builder.Services.AddTransient<ForgotPasswordViewModel>();
@@ -75,7 +122,14 @@ namespace Abipesca.Main
             builder.Services.AddTransient<ProfileViewModel>();
             builder.Services.AddTransient<MainViewModel>();
 
-            // Register Views
+            // Register NNews ViewModels
+            builder.Services.AddTransient<ArticleListViewModel>();
+            builder.Services.AddTransient<ArticleDetailViewModel>();
+            builder.Services.AddTransient<CategoryListViewModel>();
+            builder.Services.AddTransient<TagListViewModel>();
+            builder.Services.AddTransient<SearchViewModel>();
+
+            // Register NAuth Views
             builder.Services.AddTransient<LoginPage>();
             builder.Services.AddTransient<RegisterPage>();
             builder.Services.AddTransient<ForgotPasswordPage>();
@@ -84,20 +138,42 @@ namespace Abipesca.Main
             builder.Services.AddTransient<ProfilePage>();
             builder.Services.AddTransient<NAuth.Maui.Views.MainPage>();
 
+            // Register NNews Views
+            builder.Services.AddTransient<ArticleListPage>();
+            builder.Services.AddTransient<ArticleDetailPage>();
+            builder.Services.AddTransient<CategoryListPage>();
+            builder.Services.AddTransient<TagListPage>();
+            builder.Services.AddTransient<SearchPage>();
+
+            // Register Services
+            builder.Services.AddSingleton<INavigationService, NavigationService>();
+
             return builder.Build();
         }
 
-        private static string GetApiUrl()
+        private static string GetNAuthApiUrl()
         {
 #if ANDROID
-            // 10.0.2.2 é o IP especial do emulador Android para acessar localhost da máquina host
             return DeviceInfo.DeviceType == DeviceType.Virtual 
                 ? "https://10.0.2.2:5005" 
-                : "https://192.168.1.100:5005"; // Ajuste para seu IP de rede local
+                : "https://192.168.1.100:5005";
 #elif WINDOWS
-            return "https://localhost:5005";
+            return "http://localhost:5004";
 #else
-            return "https://localhost:5005";
+            return "http://localhost:5004";
+#endif
+        }
+
+        private static string GetNNewsApiUrl()
+        {
+#if ANDROID
+            return DeviceInfo.DeviceType == DeviceType.Virtual 
+                ? "https://10.0.2.2:5006" 
+                : "https://192.168.1.100:5006";
+#elif WINDOWS
+            return "http://localhost:5007";
+#else
+            return "http://localhost:5007";
 #endif
         }
 

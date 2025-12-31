@@ -53,7 +53,7 @@
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.100" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
-		<PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Options" Version="10.0.0" />
 		
 		<!-- Adicione estes pacotes para resolver dependências das DLLs legadas -->
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -62,6 +62,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\NAuth.Maui\NAuth.Maui.csproj" />
+		<ProjectReference Include="..\NNews.Maui\NNews.Maui.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -70,6 +71,12 @@
 	  </Reference>
 	  <Reference Include="NAuth.DTO">
 	    <HintPath>..\Lib\NAuth.DTO.dll</HintPath>
+	  </Reference>
+	  <Reference Include="NNews.ACL">
+	    <HintPath>..\Lib\NNews.ACL.dll</HintPath>
+	  </Reference>
+	  <Reference Include="NNews.Dtos">
+	    <HintPath>..\Lib\NNews.Dtos.dll</HintPath>
 	  </Reference>
 	</ItemGroup>
 

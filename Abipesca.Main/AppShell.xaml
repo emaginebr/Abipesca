@@ -4,13 +4,56 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:Abipesca.Main"
-    xmlns:views="clr-namespace:NAuth.Maui.Views;assembly=NAuth.Maui"
-    Shell.FlyoutBehavior="Disabled"
+    xmlns:authViews="clr-namespace:NAuth.Maui.Views;assembly=NAuth.Maui"
+    xmlns:newsViews="clr-namespace:NNews.Maui.Views;assembly=NNews.Maui"
+    Shell.FlyoutBehavior="Flyout"
     Title="Abipesca">
 
+    <!-- Login Page (sem flyout) -->
     <ShellContent
         Title="Login"
-        ContentTemplate="{DataTemplate views:LoginPage}"
-        Route="LoginPage" />
+        ContentTemplate="{DataTemplate authViews:LoginPage}"
+        Route="LoginPage"
+        FlyoutItemIsVisible="False" />
+
+    <!-- Menu Principal após Login -->
+    <FlyoutItem Title="Notícias" Icon="dotnet_bot.png">
+        <ShellContent
+            Title="Artigos"
+            ContentTemplate="{DataTemplate newsViews:ArticleListPage}"
+            Route="articlelist" />
+        
+        <ShellContent
+            Title="Categorias"
+            ContentTemplate="{DataTemplate newsViews:CategoryListPage}"
+            Route="categories" />
+        
+        <ShellContent
+            Title="Tags"
+            ContentTemplate="{DataTemplate newsViews:TagListPage}"
+            Route="tags" />
+        
+        <ShellContent
+            Title="Buscar"
+            ContentTemplate="{DataTemplate newsViews:SearchPage}"
+            Route="search" />
+    </FlyoutItem>
+
+    <!-- Menu de Conta -->
+    <FlyoutItem Title="Conta" Icon="dotnet_bot.png">
+        <ShellContent
+            Title="Perfil"
+            ContentTemplate="{DataTemplate authViews:ProfilePage}"
+            Route="profile" />
+        
+        <ShellContent
+            Title="Alterar Senha"
+            ContentTemplate="{DataTemplate authViews:ChangePasswordPage}"
+            Route="changepassword" />
+    </FlyoutItem>
+
+    <!-- Logout -->
+    <MenuItem Text="Sair" 
+              Clicked="OnLogoutClicked" />
 
 </Shell>

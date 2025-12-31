@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:NNews.Maui.ViewModels"
+             xmlns:converters="clr-namespace:NNews.Maui.Converters"
+             xmlns:dtos="clr-namespace:NNews.Dtos;assembly=NNews.Dtos"
+             x:Class="NNews.Maui.Views.SearchPage"
+             x:DataType="viewmodels:SearchViewModel"
+             Title="Buscar">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:DateTimeConverter x:Key="DateTimeConverter" />
+            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <converters:HasItemsConverter x:Key="HasItemsConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- Search Bar -->
+        <Frame Grid.Row="0"
+               Padding="16"
+               BackgroundColor="White"
+               HasShadow="True"
+               CornerRadius="0">
+            <SearchBar Placeholder="Buscar artigos..."
+                      Text="{Binding SearchText}"
+                      CancelButtonColor="#0066CC" />
+        </Frame>
+
+        <!-- Content -->
+        <Grid Grid.Row="1">
+            <!-- Search Results -->
+            <CollectionView ItemsSource="{Binding SearchResults}"
+                           SelectionMode="Single"
+                           SelectionChangedCommand="{Binding ArticleSelectedCommand}"
+                           SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedItem}"
+                           IsVisible="{Binding HasResults}">
+                
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="dtos:ArticleInfo">
+                        <Frame Margin="16,8"
+                               Padding="12"
+                               CornerRadius="8"
+                               HasShadow="True"
+                               BackgroundColor="White">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Thumbnail -->
+                                <Image Grid.Column="0"
+                                       Aspect="AspectFill"
+                                       WidthRequest="80"
+                                       HeightRequest="80">
+                                    <Image.Source>
+                                        <UriImageSource Uri="{Binding ImageName}"
+                                                       CacheValidity="7"
+                                                       CachingEnabled="True" />
+                                    </Image.Source>
+                                </Image>
+
+                                <!-- Content -->
+                                <StackLayout Grid.Column="1"
+                                           Padding="12,0,0,0"
+                                           Spacing="4">
+                                    <Label Text="{Binding Title}"
+                                           FontSize="16"
+                                           FontAttributes="Bold"
+                                           LineBreakMode="TailTruncation"
+                                           MaxLines="2"
+                                           TextColor="#212529" />
+
+                                    <Label Text="{Binding DateAt, Converter={StaticResource DateTimeConverter}}"
+                                           FontSize="12"
+                                           TextColor="#6C757D" />
+
+                                    <Label Text="{Binding Category.Title}"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="#0066CC" />
+                                </StackLayout>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Recent Searches & Empty State -->
+            <StackLayout Padding="16"
+                        IsVisible="{Binding HasResults, Converter={StaticResource InvertedBoolConverter}}">
+                <Label Text="Buscas Recentes"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       TextColor="#212529"
+                       Margin="0,0,0,16">
+                    <Label.Triggers>
+                        <DataTrigger TargetType="Label"
+                                   Binding="{Binding RecentSearches.Count}"
+                                   Value="0">
+                            <Setter Property="IsVisible" Value="False" />
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
+
+                <CollectionView ItemsSource="{Binding RecentSearches}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="{x:Type x:String}">
+                            <Frame Padding="12"
+                                   Margin="0,4"
+                                   CornerRadius="8"
+                                   HasShadow="False"
+                                   BackgroundColor="#F8F9FA">
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:SearchViewModel}}, Path=RecentSearchSelectedCommand}"
+                                                        CommandParameter="{Binding .}" />
+                                </Frame.GestureRecognizers>
+                                <Label Text="{Binding .}"
+                                       FontSize="16"
+                                       TextColor="#495057" />
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!-- Empty State -->
+                <StackLayout VerticalOptions="Center">
+                    <StackLayout.Triggers>
+                        <DataTrigger TargetType="StackLayout"
+                                   Binding="{Binding RecentSearches.Count}"
+                                   Value="0">
+                            <Setter Property="IsVisible" Value="True" />
+                        </DataTrigger>
+                    </StackLayout.Triggers>
+                    <Label Text="??"
+                           FontSize="48"
+                           HorizontalOptions="Center" />
+                    <Label Text="Digite para buscar artigos"
+                           FontSize="18"
+                           HorizontalOptions="Center"
+                           TextColor="#6C757D"
+                           Margin="0,16,0,0" />
+                </StackLayout>
+            </StackLayout>
+
+            <!-- Searching Indicator -->
+            <Grid IsVisible="{Binding IsSearching}"
+                  BackgroundColor="#80FFFFFF">
+                <ActivityIndicator IsRunning="True"
+                                 Color="#0066CC"
+                                 WidthRequest="50"
+                                 HeightRequest="50"
+                                 HorizontalOptions="Center"
+                                 VerticalOptions="Center" />
+            </Grid>
+        </Grid>
+    </Grid>
+</ContentPage>

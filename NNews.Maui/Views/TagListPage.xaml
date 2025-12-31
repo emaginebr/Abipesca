@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:NNews.Maui.ViewModels"
+             xmlns:dtos="clr-namespace:NNews.Dtos;assembly=NNews.Dtos"
+             x:Class="NNews.Maui.Views.TagListPage"
+             x:DataType="viewmodels:TagListViewModel"
+             Title="Tags">
+
+    <Grid>
+        <RefreshView IsRefreshing="{Binding IsRefreshing}"
+                     Command="{Binding RefreshCommand}">
+            <CollectionView ItemsSource="{Binding Tags}"
+                           SelectionMode="Single"
+                           SelectionChangedCommand="{Binding TagSelectedCommand}"
+                           SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedItem}">
+
+                <CollectionView.EmptyView>
+                    <StackLayout Padding="20" VerticalOptions="Center">
+                        <Label Text="Nenhuma tag encontrada"
+                               FontSize="18"
+                               HorizontalOptions="Center"
+                               TextColor="{StaticResource Gray600}" />
+                    </StackLayout>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="dtos:TagInfo">
+                        <Frame Margin="16,8"
+                               Padding="16"
+                               CornerRadius="8"
+                               HasShadow="True"
+                               BackgroundColor="White">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackLayout Grid.Column="0" Spacing="4">
+                                    <!-- Title -->
+                                    <Label Text="{Binding Title}"
+                                           FontSize="18"
+                                           FontAttributes="Bold"
+                                           TextColor="#212529" />
+
+                                    <!-- Slug -->
+                                    <Label Text="{Binding Slug}"
+                                           FontSize="14"
+                                           TextColor="#6C757D" />
+                                </StackLayout>
+
+                                <!-- Article Count Badge -->
+                                <Frame Grid.Column="1"
+                                       Padding="12,8"
+                                       CornerRadius="20"
+                                       BackgroundColor="#0066CC"
+                                       HasShadow="False"
+                                       VerticalOptions="Center">
+                                    <Label FontSize="16"
+                                           FontAttributes="Bold"
+                                           TextColor="White"
+                                           HorizontalOptions="Center">
+                                        <Label.Text>
+                                            <Binding Path="ArticleCount" />
+                                        </Label.Text>
+                                    </Label>
+                                </Frame>
+                            </Grid>
+
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup Name="CommonStates">
+                                    <VisualState Name="Normal" />
+                                    <VisualState Name="Selected">
+                                        <VisualState.Setters>
+                                            <Setter Property="BackgroundColor" Value="#F8F9FA" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <!-- Loading Overlay -->
+        <Grid IsVisible="{Binding IsBusy}"
+              BackgroundColor="#80000000">
+            <ActivityIndicator IsRunning="True"
+                             Color="White"
+                             WidthRequest="50"
+                             HeightRequest="50"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center" />
+        </Grid>
+    </Grid>
+</ContentPage>

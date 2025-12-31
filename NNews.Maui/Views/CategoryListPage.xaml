@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:NNews.Maui.ViewModels"
+             xmlns:dtos="clr-namespace:NNews.Dtos;assembly=NNews.Dtos"
+             x:Class="NNews.Maui.Views.CategoryListPage"
+             x:DataType="viewmodels:CategoryListViewModel"
+             Title="Categorias">
+
+    <Grid>
+        <RefreshView IsRefreshing="{Binding IsRefreshing}"
+                     Command="{Binding RefreshCommand}">
+            <CollectionView ItemsSource="{Binding Categories}"
+                           SelectionMode="Single"
+                           SelectionChangedCommand="{Binding CategorySelectedCommand}"
+                           SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedItem}">
+                
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical"
+                                    Span="2"
+                                    HorizontalItemSpacing="8"
+                                    VerticalItemSpacing="8" />
+                </CollectionView.ItemsLayout>
+
+                <CollectionView.EmptyView>
+                    <StackLayout Padding="20" VerticalOptions="Center">
+                        <Label Text="Nenhuma categoria encontrada"
+                               FontSize="18"
+                               HorizontalOptions="Center"
+                               TextColor="{StaticResource Gray600}" />
+                    </StackLayout>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="dtos:CategoryInfo">
+                        <Frame Padding="16"
+                               Margin="8"
+                               CornerRadius="8"
+                               HasShadow="True"
+                               BackgroundColor="#0066CC"
+                               HeightRequest="150">
+                            <Frame.Triggers>
+                                <DataTrigger TargetType="Frame"
+                                           Binding="{Binding CategoryId}"
+                                           Value="0">
+                                    <Setter Property="BackgroundColor" Value="#0066CC" />
+                                </DataTrigger>
+                            </Frame.Triggers>
+
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!-- Title -->
+                                <Label Grid.Row="0"
+                                       Text="{Binding Title}"
+                                       FontSize="18"
+                                       FontAttributes="Bold"
+                                       TextColor="White"
+                                       LineBreakMode="WordWrap"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="Center" />
+
+                                <!-- Article Count Badge -->
+                                <Frame Grid.Row="1"
+                                       Padding="8,4"
+                                       CornerRadius="12"
+                                       BackgroundColor="White"
+                                       HasShadow="False"
+                                       HorizontalOptions="Center">
+                                    <Label FontSize="14"
+                                           TextColor="#0066CC"
+                                           HorizontalOptions="Center">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="{Binding ArticleCount}" FontAttributes="Bold" />
+                                                <Span Text=" artigos" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                </Frame>
+                            </Grid>
+
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup Name="CommonStates">
+                                    <VisualState Name="Normal" />
+                                    <VisualState Name="Selected">
+                                        <VisualState.Setters>
+                                            <Setter Property="Opacity" Value="0.7" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <!-- Loading Overlay -->
+        <Grid IsVisible="{Binding IsBusy}"
+              BackgroundColor="#80000000">
+            <ActivityIndicator IsRunning="True"
+                             Color="White"
+                             WidthRequest="50"
+                             HeightRequest="50"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center" />
+        </Grid>
+    </Grid>
+</ContentPage>

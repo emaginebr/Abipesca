@@ -27,10 +27,14 @@ namespace Abipesca.Main
                     var isAuthenticated = await authService.IsAuthenticatedAsync();
                     if (isAuthenticated)
                     {
-                        await Shell.Current.GoToAsync("//MainPage");
+                        // Se já estiver autenticado, habilita o menu e vai para a lista de artigos
+                        Shell.Current.FlyoutBehavior = FlyoutBehavior.Flyout;
+                        await Shell.Current.GoToAsync("//articlelist");
                     }
                     else
                     {
+                        // Se não estiver autenticado, desabilita o menu e vai para o login
+                        Shell.Current.FlyoutBehavior = FlyoutBehavior.Disabled;
                         await Shell.Current.GoToAsync("//LoginPage");
                     }
                 }
@@ -38,6 +42,7 @@ namespace Abipesca.Main
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error checking authentication: {ex.Message}");
+                Shell.Current.FlyoutBehavior = FlyoutBehavior.Disabled;
                 await Shell.Current.GoToAsync("//LoginPage");
             }
         }

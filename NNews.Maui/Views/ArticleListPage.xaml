@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:NNews.Maui.ViewModels"
+             xmlns:converters="clr-namespace:NNews.Maui.Converters"
+             xmlns:dtos="clr-namespace:NNews.Dtos;assembly=NNews.Dtos"
+             x:Class="NNews.Maui.Views.ArticleListPage"
+             x:DataType="viewmodels:ArticleListViewModel"
+             Title="{Binding Title}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:DateTimeConverter x:Key="DateTimeConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid>
+        <RefreshView IsRefreshing="{Binding IsRefreshing}"
+                     Command="{Binding RefreshCommand}">
+            <CollectionView ItemsSource="{Binding Articles}"
+                           SelectionMode="Single"
+                           SelectionChangedCommand="{Binding ArticleSelectedCommand}"
+                           SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedItem}"
+                           RemainingItemsThreshold="2"
+                           RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}">
+                
+                <CollectionView.EmptyView>
+                    <StackLayout Padding="20" VerticalOptions="Center">
+                        <Label Text="Nenhum artigo encontrado"
+                               FontSize="18"
+                               HorizontalOptions="Center"
+                               TextColor="{StaticResource Gray600}" />
+                    </StackLayout>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="dtos:ArticleInfo">
+                        <Frame Margin="16,8"
+                               Padding="0"
+                               CornerRadius="8"
+                               HasShadow="True"
+                               BackgroundColor="White">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="200" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!-- Article Image -->
+                                <Image Grid.Row="0"
+                                       Aspect="AspectFill">
+                                    <Image.Source>
+                                        <UriImageSource Uri="{Binding ImageName}"
+                                                       CacheValidity="7"
+                                                       CachingEnabled="True" />
+                                    </Image.Source>
+                                </Image>
+
+                                <!-- Title -->
+                                <Label Grid.Row="1"
+                                       Text="{Binding Title}"
+                                       FontSize="18"
+                                       FontAttributes="Bold"
+                                       LineBreakMode="TailTruncation"
+                                       MaxLines="2"
+                                       Margin="16,12,16,8"
+                                       TextColor="#212529" />
+
+                                <!-- Date and Category -->
+                                <Grid Grid.Row="2" Margin="16,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Label Grid.Column="0"
+                                           Text="{Binding DateAt, Converter={StaticResource DateTimeConverter}}"
+                                           FontSize="14"
+                                           TextColor="#6C757D"
+                                           VerticalOptions="Center" />
+
+                                    <Label Grid.Column="1"
+                                           Text="{Binding Category.Title}"
+                                           FontSize="14"
+                                           FontAttributes="Bold"
+                                           TextColor="#0066CC"
+                                           HorizontalOptions="End"
+                                           VerticalOptions="Center" />
+                                </Grid>
+
+                                <!-- Tags -->
+                                <FlexLayout Grid.Row="3"
+                                           Margin="16,8"
+                                           Wrap="Wrap"
+                                           JustifyContent="Start"
+                                           AlignItems="Start"
+                                           BindableLayout.ItemsSource="{Binding Tags}">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate x:DataType="dtos:TagInfo">
+                                            <Frame Padding="8,4"
+                                                   Margin="0,0,8,4"
+                                                   CornerRadius="12"
+                                                   BackgroundColor="#E9ECEF"
+                                                   HasShadow="False">
+                                                <Label Text="{Binding Title}"
+                                                       FontSize="12"
+                                                       TextColor="#495057" />
+                                            </Frame>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </FlexLayout>
+
+                                <!-- Separator -->
+                                <BoxView Grid.Row="4"
+                                        HeightRequest="1"
+                                        Color="#DEE2E6"
+                                        Margin="16,8" />
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+                <CollectionView.Footer>
+                    <StackLayout Padding="20" IsVisible="{Binding IsLoadingMore}">
+                        <ActivityIndicator IsRunning="True"
+                                         Color="#0066CC" />
+                        <Label Text="Carregando mais artigos..."
+                               HorizontalOptions="Center"
+                               Margin="0,8,0,0"
+                               TextColor="#6C757D" />
+                    </StackLayout>
+                </CollectionView.Footer>
+            </CollectionView>
+        </RefreshView>
+
+        <!-- Loading Overlay -->
+        <Grid IsVisible="{Binding IsBusy}"
+              BackgroundColor="#80000000">
+            <ActivityIndicator IsRunning="True"
+                             Color="White"
+                             WidthRequest="50"
+                             HeightRequest="50"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center" />
+        </Grid>
+    </Grid>
+</ContentPage>

@@ -52,7 +52,11 @@ namespace NAuth.Maui.ViewModels
                 var user = await _authService.LoginAsync(Email, Password);
                 if (user != null)
                 {
-                    await Shell.Current.GoToAsync("MainPage");
+                    // Habilitar o menu flyout após login bem-sucedido
+                    Shell.Current.FlyoutBehavior = FlyoutBehavior.Flyout;
+                    
+                    // Navegar para a lista de artigos após login bem-sucedido
+                    await Shell.Current.GoToAsync("//articlelist");
                 }
             });
         }

@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:NNews.Maui.ViewModels"
              xmlns:converters="clr-namespace:NNews.Maui.Converters"
-             xmlns:dtos="clr-namespace:NNews.Dtos;assembly=NNews.Dtos"
+             xmlns:dtos="clr-namespace:NNews.DTO;assembly=NNews.DTO"
              x:Class="NNews.Maui.Views.ArticleListPage"
              x:DataType="viewmodels:ArticleListViewModel"
              Title="{Binding Title}">
@@ -18,9 +18,7 @@
         <RefreshView IsRefreshing="{Binding IsRefreshing}"
                      Command="{Binding RefreshCommand}">
             <CollectionView ItemsSource="{Binding Articles}"
-                           SelectionMode="Single"
-                           SelectionChangedCommand="{Binding ArticleSelectedCommand}"
-                           SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedItem}"
+                           SelectionMode="None"
                            RemainingItemsThreshold="2"
                            RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}">
                 
@@ -40,6 +38,11 @@
                                CornerRadius="8"
                                HasShadow="True"
                                BackgroundColor="White">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer 
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ArticleListViewModel}}, Path=ArticleSelectedCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Frame.GestureRecognizers>
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="200" />
@@ -112,12 +115,6 @@
                                         </DataTemplate>
                                     </BindableLayout.ItemTemplate>
                                 </FlexLayout>
-
-                                <!-- Separator -->
-                                <BoxView Grid.Row="4"
-                                        HeightRequest="1"
-                                        Color="#DEE2E6"
-                                        Margin="16,8" />
                             </Grid>
                         </Frame>
                     </DataTemplate>

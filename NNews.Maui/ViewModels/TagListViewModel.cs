@@ -1,5 +1,5 @@
 using NNews.ACL;
-using NNews.Dtos;
+using NNews.DTO;
 using NNews.Maui.Services;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
@@ -38,7 +38,8 @@ namespace NNews.Maui.ViewModels
         {
             await ExecuteAsync(async () =>
             {
-                var tags = await _tagClient.GetAllAsync();
+                // Use ListByRolesAsync for public view filtered by user roles
+                var tags = await _tagClient.ListByRolesAsync();
 
                 Tags.Clear();
                 foreach (var tag in tags.OrderByDescending(t => t.ArticleCount))
@@ -53,7 +54,7 @@ namespace NNews.Maui.ViewModels
             IsRefreshing = true;
             try
             {
-                var tags = await _tagClient.GetAllAsync();
+                var tags = await _tagClient.ListByRolesAsync();
 
                 Tags.Clear();
                 foreach (var tag in tags.OrderByDescending(t => t.ArticleCount))
@@ -77,8 +78,12 @@ namespace NNews.Maui.ViewModels
             if (tag == null)
                 return;
 
-            // TODO: Implement tag filtering
-            await ShowSuccessAsync($"Tag selecionada: {tag.Title} ({tag.ArticleCount} artigos)");
+            var parameters = new Dictionary<string, object>
+            {
+                { "TagSlug", tag.Slug ?? tag.Title.ToLower() }
+            };
+
+            await _navigationService.NavigateToAsync("articlelist", parameters);
         }
     }
 }

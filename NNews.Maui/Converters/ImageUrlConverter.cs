@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Options;
-using NNews.Dtos.Settings;
+using NNews.DTO.Settings;
 using System.Globalization;
 
 namespace NNews.Maui.Converters

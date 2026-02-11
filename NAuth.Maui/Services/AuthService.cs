@@ -26,7 +26,7 @@ namespace NAuth.Maui.Services
             
             if (usuario != null && !string.IsNullOrEmpty(usuario.Token))
             {
-                //await SaveTokenAsync(usuario.Token);
+                await SaveTokenAsync(usuario.Token);
                 await SecureStorage.Default.SetAsync(UserKey, System.Text.Json.JsonSerializer.Serialize(usuario));
             }
 

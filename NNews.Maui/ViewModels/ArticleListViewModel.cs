@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Options;
 using NNews.ACL;
-using NNews.Dtos;
-using NNews.Dtos.Settings;
+using NNews.DTO;
+using NNews.DTO.Settings;
 using NNews.Maui.Services;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
@@ -17,6 +17,7 @@ namespace NNews.Maui.ViewModels
         private const int PageSize = 10;
         private bool _hasMoreItems = true;
         private long? _selectedCategoryId;
+        private string? _selectedTagSlug;
         private string _title = "Artigos";
 
         public ObservableCollection<ArticleInfo> Articles { get; } = new();
@@ -60,11 +61,16 @@ namespace NNews.Maui.ViewModels
             ArticleSelectedCommand = new Command<ArticleInfo>(async (article) => await OnArticleSelected(article));
         }
 
-        public async Task InitializeAsync(long? categoryId = null, string? categoryTitle = null)
+        public async Task InitializeAsync(long? categoryId = null, string? categoryTitle = null, string? tagSlug = null)
         {
             _selectedCategoryId = categoryId;
+            _selectedTagSlug = tagSlug;
             
-            if (!string.IsNullOrEmpty(categoryTitle))
+            if (!string.IsNullOrEmpty(tagSlug))
+            {
+                Title = $"Tag: {tagSlug}";
+            }
+            else if (!string.IsNullOrEmpty(categoryTitle))
             {
                 Title = categoryTitle;
             }
@@ -87,10 +93,28 @@ namespace NNews.Maui.ViewModels
                 _currentPage = 1;
                 HasMoreItems = true;
 
-                var result = await _articleClient.GetAllAsync(
-                    _selectedCategoryId,
-                    _currentPage,
-                    PageSize);
+                PagedResult<ArticleInfo> result;
+                
+                if (!string.IsNullOrEmpty(_selectedTagSlug))
+                {
+                    result = await _articleClient.ListByTagAsync(
+                        _selectedTagSlug,
+                        _currentPage,
+                        PageSize);
+                }
+                else if (_selectedCategoryId.HasValue && _selectedCategoryId.Value > 0)
+                {
+                    result = await _articleClient.ListByCategoryAsync(
+                        _selectedCategoryId.Value,
+                        _currentPage,
+                        PageSize);
+                }
+                else
+                {
+                    result = await _articleClient.ListByRolesAsync(
+                        _currentPage,
+                        PageSize);
+                }
 
                 Articles.Clear();
                 foreach (var article in result.Items)
@@ -110,10 +134,28 @@ namespace NNews.Maui.ViewModels
                 _currentPage = 1;
                 HasMoreItems = true;
 
-                var result = await _articleClient.GetAllAsync(
-                    _selectedCategoryId,
-                    _currentPage,
-                    PageSize);
+                PagedResult<ArticleInfo> result;
+                
+                if (!string.IsNullOrEmpty(_selectedTagSlug))
+                {
+                    result = await _articleClient.ListByTagAsync(
+                        _selectedTagSlug,
+                        _currentPage,
+                        PageSize);
+                }
+                else if (_selectedCategoryId.HasValue && _selectedCategoryId.Value > 0)
+                {
+                    result = await _articleClient.ListByCategoryAsync(
+                        _selectedCategoryId.Value,
+                        _currentPage,
+                        PageSize);
+                }
+                else
+                {
+                    result = await _articleClient.ListByRolesAsync(
+                        _currentPage,
+                        PageSize);
+                }
 
                 Articles.Clear();
                 foreach (var article in result.Items)
@@ -143,10 +185,29 @@ namespace NNews.Maui.ViewModels
             try
             {
                 _currentPage++;
-                var result = await _articleClient.GetAllAsync(
-                    _selectedCategoryId,
-                    _currentPage,
-                    PageSize);
+                
+                PagedResult<ArticleInfo> result;
+                
+                if (!string.IsNullOrEmpty(_selectedTagSlug))
+                {
+                    result = await _articleClient.ListByTagAsync(
+                        _selectedTagSlug,
+                        _currentPage,
+                        PageSize);
+                }
+                else if (_selectedCategoryId.HasValue && _selectedCategoryId.Value > 0)
+                {
+                    result = await _articleClient.ListByCategoryAsync(
+                        _selectedCategoryId.Value,
+                        _currentPage,
+                        PageSize);
+                }
+                else
+                {
+                    result = await _articleClient.ListByRolesAsync(
+                        _currentPage,
+                        PageSize);
+                }
 
                 foreach (var article in result.Items)
                 {

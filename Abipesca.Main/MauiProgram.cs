@@ -6,11 +6,12 @@ using NAuth.Maui.Services;
 using NAuth.Maui.ViewModels;
 using NAuth.Maui.Views;
 using NNews.ACL;
-using NNews.Dtos.Settings;
+using NNews.DTO.Settings;
 using NNews.Maui.Services;
 using NNews.Maui.ViewModels;
 using NNews.Maui.Views;
 using System.Net.Http.Headers;
+using Abipesca.Main.Handlers;
 
 namespace Abipesca.Main
 {
@@ -31,6 +32,9 @@ namespace Abipesca.Main
     		builder.Logging.AddDebug();
             builder.Logging.SetMinimumLevel(LogLevel.Debug);
 #endif
+
+            // Register AuthenticationHandler as Transient
+            builder.Services.AddTransient<AuthenticationHandler>();
 
             // Configure HttpClient for NAuth with UserAgent and default settings
             builder.Services.AddHttpClient<UserClient>((serviceProvider, client) =>
@@ -58,7 +62,7 @@ namespace Abipesca.Main
                 logger.LogInformation("Fingerprint: {Fingerprint}", fingerprint);
             });
 
-            // Configure HttpClient for NNews ArticleClient
+            // Configure HttpClient for NNews ArticleClient with Authentication
             builder.Services.AddHttpClient<ArticleClient>((serviceProvider, client) =>
             {
                 var apiUrl = GetNNewsApiUrl();
@@ -69,9 +73,10 @@ namespace Abipesca.Main
                 client.BaseAddress = new Uri(apiUrl);
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.Timeout = TimeSpan.FromSeconds(30);
-            });
+            })
+            .AddHttpMessageHandler<AuthenticationHandler>();
 
-            // Configure HttpClient for NNews CategoryClient
+            // Configure HttpClient for NNews CategoryClient with Authentication
             builder.Services.AddHttpClient<CategoryClient>((serviceProvider, client) =>
             {
                 var apiUrl = GetNNewsApiUrl();
@@ -82,9 +87,10 @@ namespace Abipesca.Main
                 client.BaseAddress = new Uri(apiUrl);
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.Timeout = TimeSpan.FromSeconds(30);
-            });
+            })
+            .AddHttpMessageHandler<AuthenticationHandler>();
 
-            // Configure HttpClient for NNews TagClient
+            // Configure HttpClient for NNews TagClient with Authentication
             builder.Services.AddHttpClient<TagClient>((serviceProvider, client) =>
             {
                 var apiUrl = GetNNewsApiUrl();
@@ -95,7 +101,8 @@ namespace Abipesca.Main
                 client.BaseAddress = new Uri(apiUrl);
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.Timeout = TimeSpan.FromSeconds(30);
-            });
+            })
+            .AddHttpMessageHandler<AuthenticationHandler>();
 
             // Configure NAuth Settings
             builder.Services.Configure<NAuthSetting>(options =>

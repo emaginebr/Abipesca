@@ -1,5 +1,5 @@
 using NNews.ACL;
-using NNews.Dtos;
+using NNews.DTO;
 using NNews.Maui.Services;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
@@ -10,6 +10,7 @@ namespace NNews.Maui.ViewModels
     {
         private readonly CategoryClient _categoryClient;
         private readonly INavigationService _navigationService;
+        private long? _parentId;
 
         public ObservableCollection<CategoryInfo> Categories { get; } = new();
 
@@ -29,8 +30,9 @@ namespace NNews.Maui.ViewModels
             CategorySelectedCommand = new Command<CategoryInfo>(async (category) => await OnCategorySelected(category));
         }
 
-        public async Task InitializeAsync()
+        public async Task InitializeAsync(long? parentId = null)
         {
+            _parentId = parentId;
             await LoadCategoriesAsync();
         }
 
@@ -38,7 +40,8 @@ namespace NNews.Maui.ViewModels
         {
             await ExecuteAsync(async () =>
             {
-                var categories = await _categoryClient.GetAllAsync();
+                // Use ListByParentAsync for public view filtered by roles
+                var categories = await _categoryClient.ListByParentAsync(_parentId);
 
                 Categories.Clear();
                 foreach (var category in categories)
@@ -53,7 +56,7 @@ namespace NNews.Maui.ViewModels
             IsRefreshing = true;
             try
             {
-                var categories = await _categoryClient.GetAllAsync();
+                var categories = await _categoryClient.ListByParentAsync(_parentId);
 
                 Categories.Clear();
                 foreach (var category in categories)

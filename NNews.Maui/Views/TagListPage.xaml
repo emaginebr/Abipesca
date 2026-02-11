@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:NNews.Maui.ViewModels"
-             xmlns:dtos="clr-namespace:NNews.Dtos;assembly=NNews.Dtos"
+             xmlns:dtos="clr-namespace:NNews.DTO;assembly=NNews.DTO"
              x:Class="NNews.Maui.Views.TagListPage"
              x:DataType="viewmodels:TagListViewModel"
              Title="Tags">
@@ -11,9 +11,7 @@
         <RefreshView IsRefreshing="{Binding IsRefreshing}"
                      Command="{Binding RefreshCommand}">
             <CollectionView ItemsSource="{Binding Tags}"
-                           SelectionMode="Single"
-                           SelectionChangedCommand="{Binding TagSelectedCommand}"
-                           SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedItem}">
+                           SelectionMode="None">
 
                 <CollectionView.EmptyView>
                     <StackLayout Padding="20" VerticalOptions="Center">
@@ -31,6 +29,11 @@
                                CornerRadius="8"
                                HasShadow="True"
                                BackgroundColor="White">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer 
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:TagListViewModel}}, Path=TagSelectedCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Frame.GestureRecognizers>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
@@ -67,17 +70,6 @@
                                     </Label>
                                 </Frame>
                             </Grid>
-
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup Name="CommonStates">
-                                    <VisualState Name="Normal" />
-                                    <VisualState Name="Selected">
-                                        <VisualState.Setters>
-                                            <Setter Property="BackgroundColor" Value="#F8F9FA" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
                         </Frame>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>

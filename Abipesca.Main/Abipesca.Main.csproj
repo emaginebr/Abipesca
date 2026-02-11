@@ -51,23 +51,14 @@
 		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Options" Version="10.0.0" />
 		
-		<!-- Adicione estes pacotes para resolver dependências das DLLs legadas -->
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
+		<PackageReference Include="NNews.ACL" Version="0.2.2" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\NAuth.Maui\NAuth.Maui.csproj" />
 		<ProjectReference Include="..\NNews.Maui\NNews.Maui.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Reference Include="NNews.ACL">
-	    <HintPath>..\Lib\NNews.ACL.dll</HintPath>
-	  </Reference>
-	  <Reference Include="NNews.Dtos">
-	    <HintPath>..\Lib\NNews.Dtos.dll</HintPath>
-	  </Reference>
 	</ItemGroup>
 
 	<ItemGroup>

@@ -20,15 +20,7 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Reference Include="NNews.ACL">
-	    <HintPath>..\Lib\NNews.ACL.dll</HintPath>
-	  </Reference>
-	  <Reference Include="NNews.Dtos">
-	    <HintPath>..\Lib\NNews.Dtos.dll</HintPath>
-	  </Reference>
+		<PackageReference Include="NNews.ACL" Version="0.2.2" />
 	</ItemGroup>
 
 	<ItemGroup>

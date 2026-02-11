@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:NNews.Maui.ViewModels"
              xmlns:converters="clr-namespace:NNews.Maui.Converters"
-             xmlns:dtos="clr-namespace:NNews.Dtos;assembly=NNews.Dtos"
+             xmlns:dtos="clr-namespace:NNews.DTO;assembly=NNews.DTO"
              x:Class="NNews.Maui.Views.ArticleDetailPage"
              x:DataType="viewmodels:ArticleDetailViewModel"
              Title="Detalhes do Artigo">
@@ -11,6 +11,7 @@
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:DateTimeConverter x:Key="DateTimeConverter" />
+            <converters:HtmlWebViewSourceConverter x:Key="HtmlConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -101,12 +102,10 @@
                     </FlexLayout>
 
                     <!-- Content -->
-                    <Label Text="{Binding FormattedContent}"
-                           FontSize="16"
-                           LineHeight="1.5"
-                           TextColor="#212529"
-                           LineBreakMode="WordWrap"
-                           Margin="0,16,0,0" />
+                    <WebView x:Name="ContentWebView"
+                             Source="{Binding HtmlContent, Converter={StaticResource HtmlConverter}}"
+                             VerticalOptions="Start"
+                             HorizontalOptions="FillAndExpand" />
                 </StackLayout>
             </StackLayout>
         </ScrollView>

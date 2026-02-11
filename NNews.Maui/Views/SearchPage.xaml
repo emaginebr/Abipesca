@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:NNews.Maui.ViewModels"
              xmlns:converters="clr-namespace:NNews.Maui.Converters"
-             xmlns:dtos="clr-namespace:NNews.Dtos;assembly=NNews.Dtos"
+             xmlns:dtos="clr-namespace:NNews.DTO;assembly=NNews.DTO"
              x:Class="NNews.Maui.Views.SearchPage"
              x:DataType="viewmodels:SearchViewModel"
              Title="Buscar">
@@ -32,9 +32,7 @@
         <Grid Grid.Row="1">
             <!-- Search Results -->
             <CollectionView ItemsSource="{Binding SearchResults}"
-                           SelectionMode="Single"
-                           SelectionChangedCommand="{Binding ArticleSelectedCommand}"
-                           SelectionChangedCommandParameter="{Binding Source={RelativeSource Self}, Path=SelectedItem}"
+                           SelectionMode="None"
                            IsVisible="{Binding HasResults}">
                 
                 <CollectionView.ItemTemplate>
@@ -44,6 +42,11 @@
                                CornerRadius="8"
                                HasShadow="True"
                                BackgroundColor="White">
+                            <Frame.GestureRecognizers>
+                                <TapGestureRecognizer 
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:SearchViewModel}}, Path=ArticleSelectedCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Frame.GestureRecognizers>
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="80" />

@@ -17,37 +17,43 @@
         FlyoutItemIsVisible="False" />
 
     <!-- Menu Principal após Login -->
-    <FlyoutItem Title="Notícias" Icon="dotnet_bot.png">
+    <FlyoutItem Title="Notícias" Icon="icon_articles.svg">
         <ShellContent
             Title="Artigos"
+            Icon="icon_articles.svg"
             ContentTemplate="{DataTemplate newsViews:ArticleListPage}"
             Route="articlelist" />
         
         <ShellContent
             Title="Categorias"
+            Icon="icon_categories.svg"
             ContentTemplate="{DataTemplate newsViews:CategoryListPage}"
             Route="categories" />
         
         <ShellContent
             Title="Tags"
+            Icon="icon_tags.svg"
             ContentTemplate="{DataTemplate newsViews:TagListPage}"
             Route="tags" />
         
         <ShellContent
             Title="Buscar"
+            Icon="icon_search.svg"
             ContentTemplate="{DataTemplate newsViews:SearchPage}"
             Route="search" />
     </FlyoutItem>
 
     <!-- Menu de Conta -->
-    <FlyoutItem Title="Conta" Icon="dotnet_bot.png">
+    <FlyoutItem Title="Conta" Icon="icon_profile.svg">
         <ShellContent
             Title="Perfil"
+            Icon="icon_profile.svg"
             ContentTemplate="{DataTemplate authViews:ProfilePage}"
             Route="profile" />
         
         <ShellContent
             Title="Alterar Senha"
+            Icon="icon_password.svg"
             ContentTemplate="{DataTemplate authViews:ChangePasswordPage}"
             Route="changepassword" />
     </FlyoutItem>

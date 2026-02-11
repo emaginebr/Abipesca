@@ -1,5 +1,5 @@
 using NNews.ACL;
-using NNews.Dtos;
+using NNews.DTO;
 using NNews.Maui.Services;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
@@ -90,17 +90,14 @@ namespace NNews.Maui.ViewModels
             IsSearching = true;
             try
             {
-                // TODO: Implement proper search in API
-                // For now, get all articles and filter locally
-                var result = await _articleClient.GetAllAsync(page: 1, pageSize: 50);
-                
-                var filteredArticles = result.Items
-                    .Where(a => a.Title.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
-                               a.Content.Contains(searchText, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
+                // Use SearchAsync to search articles by keyword
+                var result = await _articleClient.SearchAsync(
+                    keyword: searchText,
+                    page: 1,
+                    pageSize: 50);
 
                 SearchResults.Clear();
-                foreach (var article in filteredArticles)
+                foreach (var article in result.Items)
                 {
                     SearchResults.Add(article);
                 }

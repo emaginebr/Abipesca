@@ -30,29 +30,35 @@ import { CalendarPage } from './pages/media/CalendarPage';
 import { ROUTES } from './lib/constants';
 
 function AppContent() {
-  const { user } = useAuth();
+  const { token } = useAuth();
 
-  const authHeaders = useMemo(() => {
-    const token = user?.token;
-    if (token) {
-      return { Authorization: `Bearer ${token}` };
-    }
-    return {};
-  }, [user?.token]);
+  // Auth headers - changes reference when token changes,
+  // which causes providers to recreate their axios instances
+  const authHeaders = useMemo(
+    () => (token ? { Authorization: `Bearer ${token}` } : undefined),
+    [token]
+  );
+
+  // Config objects change when token changes, triggering provider re-init
+  const nnewsConfig = useMemo(
+    () => ({
+      apiUrl: import.meta.env.VITE_NNEWS_API_URL || '/api/nnews',
+      headers: authHeaders,
+    }),
+    [authHeaders]
+  );
+
+  const bazzucaConfig = useMemo(
+    () => ({
+      apiUrl: import.meta.env.VITE_BAZZUCA_API_URL || '/api/bazzuca',
+      headers: authHeaders,
+    }),
+    [authHeaders]
+  );
 
   return (
-    <NNewsProvider
-      config={{
-        apiUrl: import.meta.env.VITE_NNEWS_API_URL || '/api/nnews',
-        headers: authHeaders,
-      }}
-    >
-      <BazzucaProvider
-        config={{
-          apiUrl: import.meta.env.VITE_BAZZUCA_API_URL || '/api/bazzuca',
-          headers: authHeaders,
-        }}
-      >
+    <NNewsProvider config={nnewsConfig}>
+      <BazzucaProvider config={bazzucaConfig}>
         <Toaster position="bottom-right" richColors />
         <Routes>
           <Route element={<Layout />}>
@@ -98,7 +104,7 @@ function AppContent() {
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/admin">
       <NAuthProvider
         config={{
           apiUrl: import.meta.env.VITE_API_URL || '/api/nauth',

@@ -11,7 +11,26 @@
       "Bash(git -C:*)",
       "WebFetch(domain:api.github.com)",
       "Bash(git submodule add:*)",
-      "Bash(git submodule status:*)"
+      "Bash(git submodule status:*)",
+      "Bash(python3:*)",
+      "Bash(node -e:*)",
+      "Bash(xxd:*)",
+      "WebFetch(domain:abipesca.com.br)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vite build:*)",
+      "Bash(npx tailwindcss:*)",
+      "Bash(curl:*)",
+      "Bash(git config:*)",
+      "Bash(find:*)",
+      "Bash(npm run build:*)",
+      "Bash(ls:*)",
+      "Bash(git diff:*)",
+      "Bash(git checkout:*)",
+      "Bash(git pull:*)",
+      "Bash(git cherry-pick:*)",
+      "Bash(git submodule update:*)",
+      "Bash(git add:*)"
     ]
   }
 }

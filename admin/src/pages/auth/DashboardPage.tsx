@@ -19,16 +19,14 @@ export function DashboardPage() {
       title: 'View Profile',
       description: 'Manage your account information',
       to: ROUTES.PROFILE,
-      color:
-        'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
+      color: 'bg-brand-blue/10 text-brand-blue',
     },
     {
       icon: <KeyRound className="w-6 h-6" />,
       title: 'Change Password',
       description: 'Update your password',
       to: ROUTES.CHANGE_PASSWORD,
-      color:
-        'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400',
+      color: 'bg-brand-orange/10 text-brand-orange',
     },
   ];
 
@@ -66,11 +64,11 @@ export function DashboardPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-6 md:p-8 text-white shadow-lg">
+      <div className="bg-brand-navy rounded-2xl p-6 md:p-8 text-white shadow-lg">
         <h1 className="text-2xl md:text-3xl font-bold mb-2">
           Welcome back, {user?.name || user?.email}!
         </h1>
-        <p className="text-blue-100 text-sm md:text-base">
+        <p className="text-blue-200 text-sm md:text-base">
           Manage your account and explore all features
         </p>
       </div>
@@ -80,17 +78,17 @@ export function DashboardPage() {
         {userStats.map((stat, index) => (
           <div
             key={index}
-            className="bg-white dark:bg-gray-800 rounded-xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow"
+            className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
           >
             <div className="flex items-center gap-3 mb-3">
-              <div className="text-gray-500 dark:text-gray-400">
+              <div className="text-gray-500">
                 {stat.icon}
               </div>
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+              <span className="text-sm font-medium text-gray-600">
                 {stat.label}
               </span>
             </div>
-            <p className="text-base font-semibold dark:text-white truncate">
+            <p className="text-base font-semibold text-brand-navy truncate">
               {stat.value}
             </p>
           </div>
@@ -99,7 +97,7 @@ export function DashboardPage() {
 
       {/* Quick Links */}
       <div>
-        <h2 className="text-xl md:text-2xl font-bold mb-4 dark:text-white">
+        <h2 className="text-xl md:text-2xl font-bold mb-4 text-brand-navy">
           Quick Actions
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -107,17 +105,17 @@ export function DashboardPage() {
             <Link
               key={index}
               to={link.to}
-              className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-blue-500 dark:hover:border-blue-500 transition-all group"
+              className="bg-white rounded-xl p-6 border border-gray-200 hover:shadow-lg hover:border-brand-blue transition-all group"
             >
               <div
                 className={`w-12 h-12 ${link.color} rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}
               >
                 {link.icon}
               </div>
-              <h3 className="text-lg font-semibold mb-2 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              <h3 className="text-lg font-semibold mb-2 text-brand-navy group-hover:text-brand-blue transition-colors">
                 {link.title}
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-gray-600">
                 {link.description}
               </p>
             </Link>
@@ -126,40 +124,40 @@ export function DashboardPage() {
       </div>
 
       {/* Account Info */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 shadow-sm">
-        <h2 className="text-xl font-bold mb-6 dark:text-white">
+      <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
+        <h2 className="text-xl font-bold mb-6 text-brand-navy">
           Account Information
         </h2>
         <div className="space-y-1">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 border-b border-gray-200 dark:border-gray-700 gap-2">
-            <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 border-b border-gray-200 gap-2">
+            <span className="text-sm font-medium text-gray-600">
               Full Name
             </span>
-            <span className="font-semibold dark:text-white">
+            <span className="font-semibold text-brand-navy">
               {user?.name || 'Not set'}
             </span>
           </div>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 border-b border-gray-200 dark:border-gray-700 gap-2">
-            <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 border-b border-gray-200 gap-2">
+            <span className="text-sm font-medium text-gray-600">
               Email Address
             </span>
-            <span className="font-semibold dark:text-white break-all">
+            <span className="font-semibold text-brand-navy break-all">
               {user?.email}
             </span>
           </div>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 border-b border-gray-200 dark:border-gray-700 gap-2">
-            <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 border-b border-gray-200 gap-2">
+            <span className="text-sm font-medium text-gray-600">
               Account Status
             </span>
-            <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 inline-flex items-center justify-center">
+            <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700 inline-flex items-center justify-center">
               Active
             </span>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 gap-2">
-            <span className="text-sm font-medium text-gray-600 dark:text-gray-400">
+            <span className="text-sm font-medium text-gray-600">
               User ID
             </span>
-            <span className="font-mono text-sm font-semibold dark:text-white break-all">
+            <span className="font-mono text-sm font-semibold text-brand-navy break-all">
               {user?.userId || 'N/A'}
             </span>
           </div>

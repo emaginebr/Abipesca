@@ -19,12 +19,11 @@ export function LoginPage() {
   if (isLoading) {
     return (
       <div className="min-h-[80vh] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-blue"></div>
       </div>
     );
   }
 
-  // Redirect authenticated users to dashboard
   if (isAuthenticated) {
     return <Navigate to={ROUTES.DASHBOARD} replace />;
   }
@@ -32,7 +31,6 @@ export function LoginPage() {
   const handleSuccess = () => {
     toast.success('Login successful! Welcome back.');
 
-    // Check if there's a stored redirect destination
     const redirectTo = sessionStorage.getItem('redirectAfterLogin');
     if (redirectTo) {
       sessionStorage.removeItem('redirectAfterLogin');
@@ -49,8 +47,15 @@ export function LoginPage() {
   return (
     <div className="min-h-[80vh] flex items-center justify-center">
       <div className="w-full max-w-md">
-        <Card className="p-8 bg-white dark:bg-gray-800">
+        <Card className="p-8">
           <CardHeader className="mb-8">
+            <div className="flex justify-center mb-4">
+              <img
+                src="/admin/abipesca-logo.png"
+                alt="Abipesca"
+                className="h-16 w-auto"
+              />
+            </div>
             <CardTitle>Welcome Back</CardTitle>
             <CardDescription>
               Sign in to your account to continue
@@ -69,16 +74,16 @@ export function LoginPage() {
           <CardFooter className="flex-col space-y-3">
             <Link
               to={ROUTES.FORGOT_PASSWORD}
-              className="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium"
+              className="text-sm text-brand-blue hover:underline font-medium"
             >
               Forgot your password?
             </Link>
 
-            <div className="text-sm text-gray-600 dark:text-gray-400">
+            <div className="text-sm text-gray-600">
               Don't have an account?{' '}
               <Link
                 to={ROUTES.REGISTER}
-                className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                className="text-brand-blue hover:underline font-medium"
               >
                 Sign up
               </Link>

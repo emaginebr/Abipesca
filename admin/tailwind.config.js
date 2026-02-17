@@ -19,9 +19,10 @@ export default {
     extend: {
       colors: {
         brand: {
-          violet: '#7C3AED',
-          pink: '#DB2777',
-          cyan: '#5cdef5ff',
+          navy: '#203e64',
+          blue: '#0693e3',
+          orange: '#ff6900',
+          gray: '#32373c',
         },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

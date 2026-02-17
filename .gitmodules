@@ -34,3 +34,9 @@
 [submodule "BazzucaMedia"]
 	path = BazzucaMedia
 	url = https://github.com/emaginebr/BazzucaMedia.git
+[submodule "NAuth.ACL"]
+	path = NAuth.ACL
+	url = https://github.com/emaginebr/NAuth.ACL
+[submodule "NNews.ACL"]
+	path = NNews.ACL
+	url = https://github.com/emaginebr/NNews.ACL

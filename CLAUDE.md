@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **NEVER modify, edit, or write files inside submodule directories.** These are independent git repositories. If a task requires changes in a submodule, STOP and tell the user which files need changing and why, so they can do it in a dedicated session.
 
-Submodule directories: `NAuth.API/`, `NAuth.ACL/`, `NAuth.DTO/`, `NNews.API/`, `NNews.ACL/`, `NNews.DTO/`, `NTools.API/`, `NTools.ACL/`, `NTools.DTO/`, `BazzucaMedia/`, `nauth-react/`, `nauth-app/`, `nnews-react/`, `nnews-app/`
+Submodule directories: `NAuth.API/`, `NAuth.ACL/`, `NAuth.DTO/`, `NNews.API/`, `NNews.ACL/`, `NNews.DTO/`, `NTools.API/`, `NTools.ACL/`, `NTools.DTO/`, `BazzucaMedia/`, `nauth-react/`, `nnews-react/`, `nnews-app/`
 
 ## Common Commands
 

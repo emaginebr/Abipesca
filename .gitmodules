@@ -16,9 +16,6 @@
 [submodule "nauth-react"]
 	path = nauth-react
 	url = https://github.com/emaginebr/nauth-react.git
-[submodule "nauth-app"]
-	path = nauth-app
-	url = https://github.com/emaginebr/nauth-app.git
 [submodule "NNews.API"]
 	path = NNews.API
 	url = https://github.com/emaginebr/NNews.API.git

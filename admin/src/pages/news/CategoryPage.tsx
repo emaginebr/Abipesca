@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useCategories } from 'nnews-react';
 import type { Category } from 'nnews-react';
+import { useTranslation } from 'react-i18next';
+import { ADMIN_NAMESPACE } from '../../i18n';
 import { cn } from '../../lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import { toast } from 'sonner';
@@ -21,6 +23,7 @@ import {
 const PAGE_SIZE = 10;
 
 export function CategoryPage() {
+  const { t } = useTranslation(ADMIN_NAMESPACE);
   const {
     categories,
     loading,
@@ -48,9 +51,9 @@ export function CategoryPage() {
     try {
       await fetchCategories({ searchTerm: searchTerm || undefined });
     } catch {
-      toast.error('Failed to load categories');
+      toast.error(t('categories.failedToLoad'));
     }
-  }, [fetchCategories, searchTerm]);
+  }, [fetchCategories, searchTerm, t]);
 
   useEffect(() => {
     loadCategories();
@@ -94,7 +97,7 @@ export function CategoryPage() {
   const handleModalSave = async () => {
     const trimmedName = modalName.trim();
     if (!trimmedName) {
-      toast.error('Category name is required');
+      toast.error(t('categories.nameRequired'));
       return;
     }
 
@@ -106,14 +109,14 @@ export function CategoryPage() {
           title: trimmedName,
           parentId: editingCategory.parentId,
         });
-        toast.success('Category updated successfully');
+        toast.success(t('categories.updatedSuccess'));
       } else {
         await createCategory({ title: trimmedName });
-        toast.success('Category created successfully');
+        toast.success(t('categories.createdSuccess'));
       }
       closeModal();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to save category';
+      const message = err instanceof Error ? err.message : t('categories.failedToSave');
       toast.error(message);
     } finally {
       setModalLoading(false);
@@ -135,10 +138,10 @@ export function CategoryPage() {
     setDeleteLoading(true);
     try {
       await deleteCategory(deleteTarget.categoryId);
-      toast.success('Category deleted successfully');
+      toast.success(t('categories.deletedSuccess'));
       closeDeleteConfirm();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to delete category';
+      const message = err instanceof Error ? err.message : t('categories.failedToDelete');
       toast.error(message);
     } finally {
       setDeleteLoading(false);
@@ -158,14 +161,14 @@ export function CategoryPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <FolderOpen className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-              <CardTitle>Categories</CardTitle>
+              <CardTitle>{t('categories.title')}</CardTitle>
             </div>
             <button
               onClick={openCreateModal}
               className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors"
             >
               <Plus className="h-4 w-4" />
-              New Category
+              {t('categories.newCategory')}
             </button>
           </div>
         </CardHeader>
@@ -177,7 +180,7 @@ export function CategoryPage() {
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
               <input
                 type="text"
-                placeholder="Search categories..."
+                placeholder={t('categories.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 py-2 pl-10 pr-4 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -189,7 +192,7 @@ export function CategoryPage() {
           {loading && !modalLoading && !deleteLoading && (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-blue-600 dark:text-blue-400" />
-              <span className="ml-3 text-gray-600 dark:text-gray-400">Loading categories...</span>
+              <span className="ml-3 text-gray-600 dark:text-gray-400">{t('categories.loading')}</span>
             </div>
           )}
 
@@ -198,7 +201,7 @@ export function CategoryPage() {
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <AlertCircle className="h-12 w-12 text-red-500 dark:text-red-400 mb-3" />
               <p className="text-red-600 dark:text-red-400 font-medium">
-                Error loading categories
+                {t('categories.errorLoading')}
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 {error.message}
@@ -207,7 +210,7 @@ export function CategoryPage() {
                 onClick={loadCategories}
                 className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
               >
-                Try Again
+                {t('common.tryAgain')}
               </button>
             </div>
           )}
@@ -217,12 +220,12 @@ export function CategoryPage() {
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <Inbox className="h-12 w-12 text-gray-400 dark:text-gray-500 mb-3" />
               <p className="text-gray-600 dark:text-gray-400 font-medium">
-                {searchTerm ? 'No categories match your search' : 'No categories found'}
+                {searchTerm ? t('categories.noCategoriesSearch') : t('categories.noCategories')}
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 {searchTerm
-                  ? 'Try adjusting your search term.'
-                  : 'Create your first category to get started.'}
+                  ? t('categories.noSearchDescription')
+                  : t('categories.noCategoriesDescription')}
               </p>
               {!searchTerm && (
                 <button
@@ -230,7 +233,7 @@ export function CategoryPage() {
                   className="mt-4 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
                 >
                   <Plus className="h-4 w-4" />
-                  New Category
+                  {t('categories.newCategory')}
                 </button>
               )}
             </div>
@@ -253,7 +256,7 @@ export function CategoryPage() {
                         </p>
                         {category.articleCount !== undefined && (
                           <p className="text-xs text-gray-500 dark:text-gray-400">
-                            {category.articleCount} {category.articleCount === 1 ? 'article' : 'articles'}
+                            {t('categories.articleCount', { count: category.articleCount })}
                           </p>
                         )}
                       </div>
@@ -262,14 +265,14 @@ export function CategoryPage() {
                       <button
                         onClick={() => openEditModal(category)}
                         className="inline-flex items-center rounded-md p-1.5 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
-                        title="Edit category"
+                        title={t('categories.editTooltip')}
                       >
                         <Edit2 className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => openDeleteConfirm(category)}
                         className="inline-flex items-center rounded-md p-1.5 text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                        title="Delete category"
+                        title={t('categories.deleteTooltip')}
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -282,7 +285,7 @@ export function CategoryPage() {
               {totalPages > 1 && (
                 <div className="mt-6 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 pt-4">
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Page {currentPage} of {totalPages} ({filteredCategories.length} total)
+                    {t('categories.pageOf', { page: currentPage, totalPages, totalCount: filteredCategories.length })}
                   </p>
                   <div className="flex items-center gap-2">
                     <button
@@ -296,7 +299,7 @@ export function CategoryPage() {
                       )}
                     >
                       <ChevronLeft className="h-4 w-4" />
-                      Previous
+                      {t('common.previous')}
                     </button>
                     <button
                       onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
@@ -308,7 +311,7 @@ export function CategoryPage() {
                           : 'text-gray-400 dark:text-gray-600 cursor-not-allowed'
                       )}
                     >
-                      Next
+                      {t('common.next')}
                       <ChevronRight className="h-4 w-4" />
                     </button>
                   </div>
@@ -329,7 +332,7 @@ export function CategoryPage() {
           <div className="relative z-10 w-full max-w-md rounded-xl bg-white dark:bg-gray-800 shadow-2xl border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                {editingCategory ? 'Edit Category' : 'New Category'}
+                {editingCategory ? t('categories.editModal') : t('categories.createModal')}
               </h2>
               <button
                 onClick={closeModal}
@@ -343,7 +346,7 @@ export function CategoryPage() {
                 htmlFor="category-name"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
               >
-                Name *
+                {t('categories.nameLabel')}
               </label>
               <input
                 id="category-name"
@@ -351,7 +354,7 @@ export function CategoryPage() {
                 value={modalName}
                 onChange={(e) => setModalName(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Enter category name"
+                placeholder={t('categories.namePlaceholder')}
                 autoFocus
                 className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-4 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
@@ -362,7 +365,7 @@ export function CategoryPage() {
                 disabled={modalLoading}
                 className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 transition-colors"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleModalSave}
@@ -370,7 +373,7 @@ export function CategoryPage() {
                 className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 transition-colors"
               >
                 {modalLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-                {editingCategory ? 'Update' : 'Create'}
+                {editingCategory ? t('common.update') : t('common.create')}
               </button>
             </div>
           </div>
@@ -387,11 +390,10 @@ export function CategoryPage() {
           <div className="relative z-10 w-full max-w-sm rounded-xl bg-white dark:bg-gray-800 shadow-2xl border border-gray-200 dark:border-gray-700">
             <div className="px-6 py-4">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                Delete Category
+                {t('categories.deleteTitle')}
               </h2>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Are you sure you want to delete <strong>"{deleteTarget.title}"</strong>?
-                This action cannot be undone.
+                {t('categories.deleteDescription', { name: deleteTarget.title })}
               </p>
             </div>
             <div className="flex justify-end gap-3 border-t border-gray-200 dark:border-gray-700 px-6 py-4">
@@ -400,7 +402,7 @@ export function CategoryPage() {
                 disabled={deleteLoading}
                 className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 transition-colors"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleDelete}
@@ -408,7 +410,7 @@ export function CategoryPage() {
                 className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50 transition-colors"
               >
                 {deleteLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-                Delete
+                {t('common.delete')}
               </button>
             </div>
           </div>

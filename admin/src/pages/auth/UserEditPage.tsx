@@ -2,33 +2,34 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { UserEditForm } from 'nauth-react';
 import type { UserInfo } from 'nauth-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
+import { ADMIN_NAMESPACE } from '../../i18n';
 import { ROUTES } from '../../lib/constants';
 
 export default function UserEditPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { t } = useTranslation(ADMIN_NAMESPACE);
   const userId = searchParams.get('userId');
 
   const isEditMode = !!userId;
 
   const handleSuccess = (user: UserInfo) => {
     const message = isEditMode
-      ? `User "${user.name}" updated successfully!`
-      : `User "${user.name}" created successfully!`;
+      ? t('userEdit.updatedSuccess', { name: user.name })
+      : t('userEdit.createdSuccess', { name: user.name });
 
     toast.success(message);
-
-    // Navigate to user list
     navigate(ROUTES.SEARCH_USERS);
   };
 
   const handleError = (error: Error) => {
     console.error('Error saving user:', error);
-    toast.error(`Error: ${error.message}`);
+    toast.error(t('userEdit.errorSaving', { message: error.message }));
   };
 
   const handleCancel = () => {
-    navigate(-1); // Go back to previous page
+    navigate(-1);
   };
 
   return (

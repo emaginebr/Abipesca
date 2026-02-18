@@ -1,7 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useArticles } from 'nnews-react';
 import type { Article } from 'nnews-react';
+import { useTranslation } from 'react-i18next';
+import { ADMIN_NAMESPACE } from '../../i18n';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { ROUTES } from '../../lib/constants';
 import { cn } from '../../lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
@@ -20,14 +23,6 @@ import {
 
 const PAGE_SIZE = 10;
 
-const statusLabels: Record<number, string> = {
-  0: 'Draft',
-  1: 'Published',
-  2: 'Archived',
-  3: 'Scheduled',
-  4: 'Review',
-};
-
 const statusColors: Record<number, string> = {
   0: 'bg-gray-100 text-gray-800',
   1: 'bg-green-100 text-green-800',
@@ -38,19 +33,31 @@ const statusColors: Record<number, string> = {
 
 export function ArticleListPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation(ADMIN_NAMESPACE);
+  const { language } = useLanguage();
   const { articles, loading, error, fetchArticles, deleteArticle } = useArticles();
   const [currentPage, setCurrentPage] = useState(1);
   const [deleteTarget, setDeleteTarget] = useState<{ id: number; title: string } | null>(null);
+
+  const statusLabels: Record<number, string> = useMemo(() => ({
+    0: t('articles.statusDraft'),
+    1: t('articles.statusPublished'),
+    2: t('articles.statusArchived'),
+    3: t('articles.statusScheduled'),
+    4: t('articles.statusReview'),
+  }), [t]);
+
+  const dateLocale = language === 'pt' ? 'pt-BR' : 'en-US';
 
   const loadArticles = useCallback(
     async (page: number) => {
       try {
         await fetchArticles({ page, pageSize: PAGE_SIZE });
       } catch {
-        toast.error('Failed to load articles');
+        toast.error(t('articles.failedToLoad'));
       }
     },
-    [fetchArticles]
+    [fetchArticles, t]
   );
 
   useEffect(() => {
@@ -74,16 +81,16 @@ export function ArticleListPage() {
     if (!deleteTarget) return;
     try {
       await deleteArticle(deleteTarget.id);
-      toast.success('Article deleted successfully');
+      toast.success(t('articles.deleteSuccess'));
     } catch {
-      toast.error('Failed to delete article');
+      toast.error(t('articles.failedToDelete'));
     }
     setDeleteTarget(null);
   };
 
   const formatDate = (date?: string | Date) => {
     if (!date) return '-';
-    return new Date(date).toLocaleDateString('pt-BR', {
+    return new Date(date).toLocaleDateString(dateLocale, {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -97,14 +104,14 @@ export function ArticleListPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <FileText className="h-8 w-8 text-brand-blue" />
-              <CardTitle>Articles</CardTitle>
+              <CardTitle>{t('articles.title')}</CardTitle>
             </div>
             <button
               onClick={() => navigate(ROUTES.ARTICLES_NEW)}
               className="inline-flex items-center gap-2 rounded-lg bg-brand-blue px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-offset-2 transition-colors"
             >
               <Plus className="h-4 w-4" />
-              New Article
+              {t('articles.newArticle')}
             </button>
           </div>
         </CardHeader>
@@ -114,7 +121,7 @@ export function ArticleListPage() {
           {loading && (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-brand-blue" />
-              <span className="ml-3 text-gray-600">Loading articles...</span>
+              <span className="ml-3 text-gray-600">{t('articles.loading')}</span>
             </div>
           )}
 
@@ -123,7 +130,7 @@ export function ArticleListPage() {
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <AlertCircle className="h-12 w-12 text-red-500 mb-3" />
               <p className="text-red-600 font-medium">
-                Error loading articles
+                {t('articles.errorLoading')}
               </p>
               <p className="text-sm text-gray-500 mt-1">
                 {error.message}
@@ -132,7 +139,7 @@ export function ArticleListPage() {
                 onClick={() => loadArticles(currentPage)}
                 className="mt-4 rounded-lg bg-brand-blue px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 transition-colors"
               >
-                Try Again
+                {t('common.tryAgain')}
               </button>
             </div>
           )}
@@ -142,17 +149,17 @@ export function ArticleListPage() {
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <Inbox className="h-12 w-12 text-gray-400 mb-3" />
               <p className="text-gray-600 font-medium">
-                No articles found
+                {t('articles.noArticles')}
               </p>
               <p className="text-sm text-gray-500 mt-1">
-                Create your first article to get started.
+                {t('articles.noArticlesDescription')}
               </p>
               <button
                 onClick={() => navigate(ROUTES.ARTICLES_NEW)}
                 className="mt-4 inline-flex items-center gap-2 rounded-lg bg-brand-blue px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 transition-colors"
               >
                 <Plus className="h-4 w-4" />
-                New Article
+                {t('articles.newArticle')}
               </button>
             </div>
           )}
@@ -165,19 +172,19 @@ export function ArticleListPage() {
                   <thead>
                     <tr className="border-b border-gray-200">
                       <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                        Title
+                        {t('articles.tableTitle')}
                       </th>
                       <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                        Category
+                        {t('articles.tableCategory')}
                       </th>
                       <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                        Status
+                        {t('articles.tableStatus')}
                       </th>
                       <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                        Date
+                        {t('articles.tableDate')}
                       </th>
                       <th className="pb-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-                        Actions
+                        {t('articles.tableActions')}
                       </th>
                     </tr>
                   </thead>
@@ -216,7 +223,7 @@ export function ArticleListPage() {
                               statusColors[article.status] || statusColors[0]
                             )}
                           >
-                            {statusLabels[article.status] || 'Unknown'}
+                            {statusLabels[article.status] || t('articles.statusUnknown')}
                           </span>
                         </td>
                         <td className="py-4 pr-4 text-sm text-gray-600">
@@ -226,7 +233,7 @@ export function ArticleListPage() {
                           <button
                             onClick={(e) => handleDeleteClick(e, article)}
                             className="inline-flex items-center rounded-md p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                            title="Delete article"
+                            title={t('articles.deleteTooltip')}
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
@@ -241,7 +248,7 @@ export function ArticleListPage() {
               {articles.totalPages > 1 && (
                 <div className="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
                   <p className="text-sm text-gray-600">
-                    Page {articles.page} of {articles.totalPages} ({articles.totalCount} total)
+                    {t('articles.pageOf', { page: articles.page, totalPages: articles.totalPages, totalCount: articles.totalCount })}
                   </p>
                   <div className="flex items-center gap-2">
                     <button
@@ -255,7 +262,7 @@ export function ArticleListPage() {
                       )}
                     >
                       <ChevronLeft className="h-4 w-4" />
-                      Previous
+                      {t('common.previous')}
                     </button>
                     <button
                       onClick={() => handlePageChange(currentPage + 1)}
@@ -267,7 +274,7 @@ export function ArticleListPage() {
                           : 'text-gray-400 cursor-not-allowed'
                       )}
                     >
-                      Next
+                      {t('common.next')}
                       <ChevronRight className="h-4 w-4" />
                     </button>
                   </div>
@@ -283,10 +290,10 @@ export function ArticleListPage() {
         open={deleteTarget !== null}
         onOpenChange={(open) => { if (!open) setDeleteTarget(null); }}
         onConfirm={handleDeleteConfirm}
-        title="Delete Article"
-        description={`Are you sure you want to delete "${deleteTarget?.title}"? This action cannot be undone.`}
-        confirmLabel="Delete"
-        cancelLabel="Cancel"
+        title={t('articles.deleteTitle')}
+        description={t('articles.deleteDescription', { title: deleteTarget?.title })}
+        confirmLabel={t('common.delete')}
+        cancelLabel={t('common.cancel')}
         variant="danger"
       />
     </div>

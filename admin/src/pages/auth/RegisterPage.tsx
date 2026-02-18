@@ -1,6 +1,8 @@
 import { RegisterForm } from 'nauth-react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { useAuth } from 'nauth-react';
+import { useTranslation } from 'react-i18next';
+import { ADMIN_NAMESPACE } from '../../i18n';
 import { ROUTES } from '../../lib/constants';
 import {
   Card,
@@ -14,6 +16,7 @@ import {
 export function RegisterPage() {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading } = useAuth();
+  const { t } = useTranslation(ADMIN_NAMESPACE);
 
   if (isLoading) {
     return (
@@ -23,7 +26,6 @@ export function RegisterPage() {
     );
   }
 
-  // Redirect authenticated users to dashboard
   if (isAuthenticated) {
     return <Navigate to={ROUTES.DASHBOARD} replace />;
   }
@@ -38,10 +40,10 @@ export function RegisterPage() {
         <Card className="p-8">
           <CardHeader>
             <CardTitle className="text-3xl font-bold mb-2 dark:text-white">
-              Create Account
+              {t('register.title')}
             </CardTitle>
             <CardDescription className="text-gray-600 dark:text-gray-400">
-              Get started with your free account
+              {t('register.description')}
             </CardDescription>
           </CardHeader>
 
@@ -54,12 +56,12 @@ export function RegisterPage() {
           </CardContent>
 
           <CardFooter className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400 justify-center">
-            Already have an account?{' '}
+            {t('register.alreadyHaveAccount')}{' '}
             <Link
               to={ROUTES.LOGIN}
               className="text-blue-600 dark:text-blue-400 hover:underline font-medium ml-1"
             >
-              Sign in
+              {t('register.signIn')}
             </Link>
           </CardFooter>
         </Card>

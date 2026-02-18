@@ -1,3 +1,5 @@
+import { useTranslation } from 'react-i18next';
+import { ADMIN_NAMESPACE } from '../../i18n';
 import {
   Modal,
   ModalContent,
@@ -38,11 +40,16 @@ export function ConfirmModal({
   onConfirm,
   title,
   description,
-  confirmLabel = "Confirm",
-  cancelLabel = "Cancel",
+  confirmLabel,
+  cancelLabel,
   variant = "default",
   loading = false,
 }: ConfirmModalProps) {
+  const { t } = useTranslation(ADMIN_NAMESPACE);
+
+  const resolvedConfirmLabel = confirmLabel ?? t('common.confirm');
+  const resolvedCancelLabel = cancelLabel ?? t('common.cancel');
+
   const handleConfirm = async () => {
     await onConfirm();
     onOpenChange(false);
@@ -64,7 +71,7 @@ export function ConfirmModal({
               disabled={loading}
               className="px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 hover:bg-gray-200 text-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2"
             >
-              {cancelLabel}
+              {resolvedCancelLabel}
             </button>
           </ModalClose>
           <button
@@ -76,7 +83,7 @@ export function ConfirmModal({
               variantStyles[variant]
             )}
           >
-            {loading ? "Loading..." : confirmLabel}
+            {loading ? t('common.loading') : resolvedConfirmLabel}
           </button>
         </ModalFooter>
       </ModalContent>

@@ -1,6 +1,8 @@
 import { ChangePasswordForm } from 'nauth-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from 'nauth-react';
+import { useTranslation } from 'react-i18next';
+import { ADMIN_NAMESPACE } from '../../i18n';
 import { ROUTES } from '../../lib/constants';
 import { KeyRound, CheckCircle } from 'lucide-react';
 import { useState } from 'react';
@@ -8,11 +10,11 @@ import { useState } from 'react';
 export function ChangePasswordPage() {
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const { t } = useTranslation(ADMIN_NAMESPACE);
   const [changeSuccess, setChangeSuccess] = useState(false);
 
   const handleSuccess = async () => {
     setChangeSuccess(true);
-    // Wait 2 seconds before logging out
     setTimeout(async () => {
       await logout();
       navigate(ROUTES.LOGIN);
@@ -30,10 +32,10 @@ export function ChangePasswordPage() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold dark:text-white">
-                  Change Password
+                  {t('changePassword.title')}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Update your password to keep your account secure
+                  {t('changePassword.description')}
                 </p>
               </div>
             </div>
@@ -44,38 +46,28 @@ export function ChangePasswordPage() {
             />
 
             <h2 className="text-lg font-semibold mb-4 dark:text-white">
-              Password Security Tips
+              {t('changePassword.securityTipsTitle')}
             </h2>
             <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
               <li className="flex items-start gap-2">
-                <span className="text-green-600 dark:text-green-400">
-                  &#10003;
-                </span>
-                Use at least 8 characters
+                <span className="text-green-600 dark:text-green-400">&#10003;</span>
+                {t('changePassword.tip1')}
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-green-600 dark:text-green-400">
-                  &#10003;
-                </span>
-                Include uppercase and lowercase letters
+                <span className="text-green-600 dark:text-green-400">&#10003;</span>
+                {t('changePassword.tip2')}
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-green-600 dark:text-green-400">
-                  &#10003;
-                </span>
-                Add numbers and special characters
+                <span className="text-green-600 dark:text-green-400">&#10003;</span>
+                {t('changePassword.tip3')}
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-green-600 dark:text-green-400">
-                  &#10003;
-                </span>
-                Avoid common words and patterns
+                <span className="text-green-600 dark:text-green-400">&#10003;</span>
+                {t('changePassword.tip4')}
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-green-600 dark:text-green-400">
-                  &#10003;
-                </span>
-                Don't reuse passwords from other accounts
+                <span className="text-green-600 dark:text-green-400">&#10003;</span>
+                {t('changePassword.tip5')}
               </li>
             </ul>
           </>
@@ -85,11 +77,10 @@ export function ChangePasswordPage() {
               <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
             </div>
             <h1 className="text-2xl font-bold mb-2 dark:text-white">
-              Password Changed Successfully
+              {t('changePassword.successTitle')}
             </h1>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Your password has been updated. You will be logged out
-              shortly...
+              {t('changePassword.successDescription')}
             </p>
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
           </div>

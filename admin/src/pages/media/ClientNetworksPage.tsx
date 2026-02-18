@@ -2,12 +2,15 @@ import { useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { SocialNetworkList, SocialNetworkModal } from 'bazzuca-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
+import { ADMIN_NAMESPACE } from '../../i18n';
 import { ROUTES } from '../../lib/constants';
 import { ArrowLeft, Share2, Plus } from 'lucide-react';
 
 export function ClientNetworksPage() {
   const { clientId } = useParams<{ clientId: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation(ADMIN_NAMESPACE);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedNetwork, setSelectedNetwork] = useState<any>(null);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -28,7 +31,7 @@ export function ClientNetworksPage() {
 
   const handleDelete = () => {
     refresh();
-    toast.success('Social network removed successfully.');
+    toast.success(t('clientNetworks.removedSuccess'));
   };
 
   const handleSave = () => {
@@ -37,8 +40,8 @@ export function ClientNetworksPage() {
     refresh();
     toast.success(
       selectedNetwork
-        ? 'Social network updated successfully.'
-        : 'Social network added successfully.'
+        ? t('clientNetworks.updatedSuccess')
+        : t('clientNetworks.addedSuccess')
     );
   };
 
@@ -59,7 +62,7 @@ export function ClientNetworksPage() {
         className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
-        Back to Clients
+        {t('clientNetworks.backToClients')}
       </button>
 
       {/* Header */}
@@ -70,11 +73,11 @@ export function ClientNetworksPage() {
               <Share2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Social Networks
+              {t('clientNetworks.title')}
             </h1>
           </div>
           <p className="text-gray-600 dark:text-gray-400">
-            Manage social network connections for this client.
+            {t('clientNetworks.description')}
           </p>
         </div>
         <button
@@ -82,7 +85,7 @@ export function ClientNetworksPage() {
           className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
         >
           <Plus className="w-4 h-4" />
-          Add Network
+          {t('clientNetworks.addNetwork')}
         </button>
       </div>
 

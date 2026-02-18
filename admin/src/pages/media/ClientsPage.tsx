@@ -2,11 +2,14 @@ import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ClientList, ClientModal } from 'bazzuca-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
+import { ADMIN_NAMESPACE } from '../../i18n';
 import { ROUTES } from '../../lib/constants';
 import { Plus, Users } from 'lucide-react';
 
 export function ClientsPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation(ADMIN_NAMESPACE);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState<any>(null);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -31,7 +34,7 @@ export function ClientsPage() {
 
   const handleDelete = () => {
     refresh();
-    toast.success('Client deleted successfully.');
+    toast.success(t('clients.deletedSuccess'));
   };
 
   const handleSave = () => {
@@ -39,7 +42,7 @@ export function ClientsPage() {
     setSelectedClient(null);
     refresh();
     toast.success(
-      selectedClient ? 'Client updated successfully.' : 'Client created successfully.'
+      selectedClient ? t('clients.updatedSuccess') : t('clients.createdSuccess')
     );
   };
 
@@ -58,11 +61,11 @@ export function ClientsPage() {
               <Users className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Clients
+              {t('clients.title')}
             </h1>
           </div>
           <p className="text-gray-600 dark:text-gray-400">
-            Manage your social media clients and their connected networks.
+            {t('clients.description')}
           </p>
         </div>
         <button
@@ -70,7 +73,7 @@ export function ClientsPage() {
           className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
         >
           <Plus className="w-4 h-4" />
-          New Client
+          {t('clients.newClient')}
         </button>
       </div>
 

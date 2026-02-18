@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTags } from 'nnews-react';
 import type { Tag } from 'nnews-react';
+import { useTranslation } from 'react-i18next';
+import { ADMIN_NAMESPACE } from '../../i18n';
 import { cn } from '../../lib/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import { toast } from 'sonner';
@@ -22,6 +24,7 @@ import {
 const PAGE_SIZE = 10;
 
 export function TagsPage() {
+  const { t } = useTranslation(ADMIN_NAMESPACE);
   const {
     tags,
     loading,
@@ -57,9 +60,9 @@ export function TagsPage() {
     try {
       await fetchTags({ searchTerm: searchTerm || undefined });
     } catch {
-      toast.error('Failed to load tags');
+      toast.error(t('tags.failedToLoad'));
     }
-  }, [fetchTags, searchTerm]);
+  }, [fetchTags, searchTerm, t]);
 
   useEffect(() => {
     loadTags();
@@ -106,7 +109,7 @@ export function TagsPage() {
   const handleModalSave = async () => {
     const trimmedName = modalName.trim();
     if (!trimmedName) {
-      toast.error('Tag name is required');
+      toast.error(t('tags.nameRequired'));
       return;
     }
 
@@ -118,17 +121,17 @@ export function TagsPage() {
           title: trimmedName,
           slug: modalSlug.trim() || undefined,
         });
-        toast.success('Tag updated successfully');
+        toast.success(t('tags.updatedSuccess'));
       } else {
         await createTag({
           title: trimmedName,
           slug: modalSlug.trim() || undefined,
         });
-        toast.success('Tag created successfully');
+        toast.success(t('tags.createdSuccess'));
       }
       closeModal();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to save tag';
+      const message = err instanceof Error ? err.message : t('tags.failedToSave');
       toast.error(message);
     } finally {
       setModalLoading(false);
@@ -150,10 +153,10 @@ export function TagsPage() {
     setDeleteLoading(true);
     try {
       await deleteTag(deleteTarget.tagId);
-      toast.success('Tag deleted successfully');
+      toast.success(t('tags.deletedSuccess'));
       closeDeleteConfirm();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to delete tag';
+      const message = err instanceof Error ? err.message : t('tags.failedToDelete');
       toast.error(message);
     } finally {
       setDeleteLoading(false);
@@ -175,22 +178,22 @@ export function TagsPage() {
 
   const handleMerge = async () => {
     if (!mergeSource || !mergeTarget) {
-      toast.error('Please select both source and target tags');
+      toast.error(t('tags.mergeBothRequired'));
       return;
     }
 
     if (mergeSource === mergeTarget) {
-      toast.error('Source and target tags must be different');
+      toast.error(t('tags.mergeDifferentRequired'));
       return;
     }
 
     setMergeLoading(true);
     try {
       await mergeTags(Number(mergeSource), Number(mergeTarget));
-      toast.success('Tags merged successfully');
+      toast.success(t('tags.mergeSuccess'));
       closeMergeModal();
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to merge tags';
+      const message = err instanceof Error ? err.message : t('tags.failedToMerge');
       toast.error(message);
     } finally {
       setMergeLoading(false);
@@ -210,7 +213,7 @@ export function TagsPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <TagIcon className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-              <CardTitle>Tags</CardTitle>
+              <CardTitle>{t('tags.title')}</CardTitle>
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -219,14 +222,14 @@ export function TagsPage() {
                 className="inline-flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 transition-colors"
               >
                 <Merge className="h-4 w-4" />
-                Merge Tags
+                {t('tags.mergeTags')}
               </button>
               <button
                 onClick={openCreateModal}
                 className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors"
               >
                 <Plus className="h-4 w-4" />
-                New Tag
+                {t('tags.newTag')}
               </button>
             </div>
           </div>
@@ -239,7 +242,7 @@ export function TagsPage() {
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
               <input
                 type="text"
-                placeholder="Search tags..."
+                placeholder={t('tags.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 py-2 pl-10 pr-4 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -251,7 +254,7 @@ export function TagsPage() {
           {loading && !modalLoading && !deleteLoading && !mergeLoading && (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-blue-600 dark:text-blue-400" />
-              <span className="ml-3 text-gray-600 dark:text-gray-400">Loading tags...</span>
+              <span className="ml-3 text-gray-600 dark:text-gray-400">{t('tags.loading')}</span>
             </div>
           )}
 
@@ -260,7 +263,7 @@ export function TagsPage() {
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <AlertCircle className="h-12 w-12 text-red-500 dark:text-red-400 mb-3" />
               <p className="text-red-600 dark:text-red-400 font-medium">
-                Error loading tags
+                {t('tags.errorLoading')}
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 {error.message}
@@ -269,7 +272,7 @@ export function TagsPage() {
                 onClick={loadTags}
                 className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
               >
-                Try Again
+                {t('common.tryAgain')}
               </button>
             </div>
           )}
@@ -279,12 +282,12 @@ export function TagsPage() {
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <Inbox className="h-12 w-12 text-gray-400 dark:text-gray-500 mb-3" />
               <p className="text-gray-600 dark:text-gray-400 font-medium">
-                {searchTerm ? 'No tags match your search' : 'No tags found'}
+                {searchTerm ? t('tags.noTagsSearch') : t('tags.noTags')}
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 {searchTerm
-                  ? 'Try adjusting your search term.'
-                  : 'Create your first tag to get started.'}
+                  ? t('tags.noSearchDescription')
+                  : t('tags.noTagsDescription')}
               </p>
               {!searchTerm && (
                 <button
@@ -292,7 +295,7 @@ export function TagsPage() {
                   className="mt-4 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
                 >
                   <Plus className="h-4 w-4" />
-                  New Tag
+                  {t('tags.newTag')}
                 </button>
               )}
             </div>
@@ -321,7 +324,7 @@ export function TagsPage() {
                           )}
                           {tag.articleCount !== undefined && (
                             <p className="text-xs text-gray-500 dark:text-gray-400">
-                              {tag.articleCount} {tag.articleCount === 1 ? 'article' : 'articles'}
+                              {t('tags.articleCount', { count: tag.articleCount })}
                             </p>
                           )}
                         </div>
@@ -331,14 +334,14 @@ export function TagsPage() {
                       <button
                         onClick={() => openEditModal(tag)}
                         className="inline-flex items-center rounded-md p-1.5 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
-                        title="Edit tag"
+                        title={t('tags.editTooltip')}
                       >
                         <Edit2 className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => openDeleteConfirm(tag)}
                         className="inline-flex items-center rounded-md p-1.5 text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                        title="Delete tag"
+                        title={t('tags.deleteTooltip')}
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -351,7 +354,7 @@ export function TagsPage() {
               {totalPages > 1 && (
                 <div className="mt-6 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 pt-4">
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Page {currentPage} of {totalPages} ({filteredTags.length} total)
+                    {t('tags.pageOf', { page: currentPage, totalPages, totalCount: filteredTags.length })}
                   </p>
                   <div className="flex items-center gap-2">
                     <button
@@ -365,7 +368,7 @@ export function TagsPage() {
                       )}
                     >
                       <ChevronLeft className="h-4 w-4" />
-                      Previous
+                      {t('common.previous')}
                     </button>
                     <button
                       onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
@@ -377,7 +380,7 @@ export function TagsPage() {
                           : 'text-gray-400 dark:text-gray-600 cursor-not-allowed'
                       )}
                     >
-                      Next
+                      {t('common.next')}
                       <ChevronRight className="h-4 w-4" />
                     </button>
                   </div>
@@ -391,14 +394,11 @@ export function TagsPage() {
       {/* Create/Edit Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div
-            className="fixed inset-0 bg-black/50"
-            onClick={closeModal}
-          />
+          <div className="fixed inset-0 bg-black/50" onClick={closeModal} />
           <div className="relative z-10 w-full max-w-md rounded-xl bg-white dark:bg-gray-800 shadow-2xl border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                {editingTag ? 'Edit Tag' : 'New Tag'}
+                {editingTag ? t('tags.editModal') : t('tags.createModal')}
               </h2>
               <button
                 onClick={closeModal}
@@ -409,11 +409,8 @@ export function TagsPage() {
             </div>
             <div className="space-y-4 px-6 py-4">
               <div>
-                <label
-                  htmlFor="tag-name"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                >
-                  Name *
+                <label htmlFor="tag-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {t('tags.nameLabel')}
                 </label>
                 <input
                   id="tag-name"
@@ -421,24 +418,21 @@ export function TagsPage() {
                   value={modalName}
                   onChange={(e) => setModalName(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Enter tag name"
+                  placeholder={t('tags.namePlaceholder')}
                   autoFocus
                   className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-4 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
               <div>
-                <label
-                  htmlFor="tag-slug"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                >
-                  Slug
+                <label htmlFor="tag-slug" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {t('tags.slugLabel')}
                 </label>
                 <input
                   id="tag-slug"
                   type="text"
                   value={modalSlug}
                   onChange={(e) => setModalSlug(e.target.value)}
-                  placeholder="Auto-generated if empty"
+                  placeholder={t('tags.slugPlaceholder')}
                   className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-4 py-2 text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
@@ -449,7 +443,7 @@ export function TagsPage() {
                 disabled={modalLoading}
                 className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 transition-colors"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleModalSave}
@@ -457,7 +451,7 @@ export function TagsPage() {
                 className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 transition-colors"
               >
                 {modalLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-                {editingTag ? 'Update' : 'Create'}
+                {editingTag ? t('common.update') : t('common.create')}
               </button>
             </div>
           </div>
@@ -467,18 +461,14 @@ export function TagsPage() {
       {/* Delete Confirmation Modal */}
       {deleteTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div
-            className="fixed inset-0 bg-black/50"
-            onClick={closeDeleteConfirm}
-          />
+          <div className="fixed inset-0 bg-black/50" onClick={closeDeleteConfirm} />
           <div className="relative z-10 w-full max-w-sm rounded-xl bg-white dark:bg-gray-800 shadow-2xl border border-gray-200 dark:border-gray-700">
             <div className="px-6 py-4">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                Delete Tag
+                {t('tags.deleteTitle')}
               </h2>
               <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                Are you sure you want to delete <strong>"{deleteTarget.title}"</strong>?
-                This action cannot be undone.
+                {t('tags.deleteDescription', { name: deleteTarget.title })}
               </p>
             </div>
             <div className="flex justify-end gap-3 border-t border-gray-200 dark:border-gray-700 px-6 py-4">
@@ -487,7 +477,7 @@ export function TagsPage() {
                 disabled={deleteLoading}
                 className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 transition-colors"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleDelete}
@@ -495,7 +485,7 @@ export function TagsPage() {
                 className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50 transition-colors"
               >
                 {deleteLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-                Delete
+                {t('common.delete')}
               </button>
             </div>
           </div>
@@ -505,14 +495,11 @@ export function TagsPage() {
       {/* Merge Tags Modal */}
       {isMergeOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div
-            className="fixed inset-0 bg-black/50"
-            onClick={closeMergeModal}
-          />
+          <div className="fixed inset-0 bg-black/50" onClick={closeMergeModal} />
           <div className="relative z-10 w-full max-w-md rounded-xl bg-white dark:bg-gray-800 shadow-2xl border border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                Merge Tags
+                {t('tags.mergeTitle')}
               </h2>
               <button
                 onClick={closeMergeModal}
@@ -523,15 +510,11 @@ export function TagsPage() {
             </div>
             <div className="space-y-4 px-6 py-4">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                All articles from the source tag will be moved to the target tag.
-                The source tag will be deleted after merging.
+                {t('tags.mergeDescription')}
               </p>
               <div>
-                <label
-                  htmlFor="merge-source"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                >
-                  Source Tag (will be deleted)
+                <label htmlFor="merge-source" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {t('tags.mergeSourceLabel')}
                 </label>
                 <select
                   id="merge-source"
@@ -539,23 +522,20 @@ export function TagsPage() {
                   onChange={(e) => setMergeSource(e.target.value ? Number(e.target.value) : '')}
                   className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-4 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
-                  <option value="">Select source tag...</option>
+                  <option value="">{t('tags.mergeSourcePlaceholder')}</option>
                   {tags
-                    .filter((t) => t.tagId && t.tagId !== mergeTarget)
+                    .filter((tg) => tg.tagId && tg.tagId !== mergeTarget)
                     .map((tag) => (
                       <option key={tag.tagId} value={tag.tagId}>
                         {tag.title}
-                        {tag.articleCount !== undefined ? ` (${tag.articleCount} articles)` : ''}
+                        {tag.articleCount !== undefined ? ` ${t('tags.mergeArticles', { count: tag.articleCount })}` : ''}
                       </option>
                     ))}
                 </select>
               </div>
               <div>
-                <label
-                  htmlFor="merge-target"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                >
-                  Target Tag (will receive articles)
+                <label htmlFor="merge-target" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {t('tags.mergeTargetLabel')}
                 </label>
                 <select
                   id="merge-target"
@@ -563,13 +543,13 @@ export function TagsPage() {
                   onChange={(e) => setMergeTarget(e.target.value ? Number(e.target.value) : '')}
                   className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-4 py-2 text-sm text-gray-900 dark:text-gray-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
-                  <option value="">Select target tag...</option>
+                  <option value="">{t('tags.mergeTargetPlaceholder')}</option>
                   {tags
-                    .filter((t) => t.tagId && t.tagId !== mergeSource)
+                    .filter((tg) => tg.tagId && tg.tagId !== mergeSource)
                     .map((tag) => (
                       <option key={tag.tagId} value={tag.tagId}>
                         {tag.title}
-                        {tag.articleCount !== undefined ? ` (${tag.articleCount} articles)` : ''}
+                        {tag.articleCount !== undefined ? ` ${t('tags.mergeArticles', { count: tag.articleCount })}` : ''}
                       </option>
                     ))}
                 </select>
@@ -581,7 +561,7 @@ export function TagsPage() {
                 disabled={mergeLoading}
                 className="rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 transition-colors"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleMerge}
@@ -589,7 +569,7 @@ export function TagsPage() {
                 className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 transition-colors"
               >
                 {mergeLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-                Merge Tags
+                {t('tags.mergeTags')}
               </button>
             </div>
           </div>

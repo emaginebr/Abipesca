@@ -1,11 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 import { SearchForm } from 'nauth-react';
 import type { PagedResult, UserInfo } from 'nauth-react';
+import { useTranslation } from 'react-i18next';
+import { ADMIN_NAMESPACE } from '../../i18n';
 import { ROUTES } from '../../lib/constants';
 import { UserPlus } from 'lucide-react';
 
 export default function SearchUsersPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation(ADMIN_NAMESPACE);
 
   const handleSuccess = (result: PagedResult<UserInfo>) => {
     console.log('Search successful:', result);
@@ -25,10 +28,10 @@ export default function SearchUsersPage() {
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-            Search Users
+            {t('searchUsers.title')}
           </h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Search and browse all users in the system
+            {t('searchUsers.description')}
           </p>
         </div>
         <button
@@ -36,7 +39,7 @@ export default function SearchUsersPage() {
           className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
         >
           <UserPlus className="w-5 h-5 mr-2" />
-          Create User
+          {t('searchUsers.createUser')}
         </button>
       </div>
 

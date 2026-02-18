@@ -30,7 +30,15 @@
       "Bash(git pull:*)",
       "Bash(git cherry-pick:*)",
       "Bash(git submodule update:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git submodule:*)",
+      "Bash(git rm:*)",
+      "Bash(git fetch:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: remove nauth-app submodule and update nauth-react to latest main\n\n- Remove nauth-app submodule \\(no longer used, replaced by unified admin frontend\\)\n- Update nauth-react from v0.2.10 to v0.7.1 \\(latest main\\)\n- Update CLAUDE.md to reflect removed submodule\n\nCo-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(docker ps:*)",
+      "Bash(docker.exe ps:*)"
     ]
   }
 }

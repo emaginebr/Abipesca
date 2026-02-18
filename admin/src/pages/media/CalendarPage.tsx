@@ -1,21 +1,28 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PostCalendar, useSocialNetworks } from 'bazzuca-react';
+import { useTranslation } from 'react-i18next';
+import { ADMIN_NAMESPACE } from '../../i18n';
 import { ROUTES } from '../../lib/constants';
 import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react';
 
-const MONTH_NAMES = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
-
 export function CalendarPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation(ADMIN_NAMESPACE);
   const now = new Date();
   const [currentMonth, setCurrentMonth] = useState(now.getMonth());
   const [currentYear, setCurrentYear] = useState(now.getFullYear());
   const [selectedClientId, setSelectedClientId] = useState<string>('');
   const { clients } = useSocialNetworks();
+
+  const monthNames = [
+    t('calendar.months.january'), t('calendar.months.february'),
+    t('calendar.months.march'), t('calendar.months.april'),
+    t('calendar.months.may'), t('calendar.months.june'),
+    t('calendar.months.july'), t('calendar.months.august'),
+    t('calendar.months.september'), t('calendar.months.october'),
+    t('calendar.months.november'), t('calendar.months.december'),
+  ];
 
   const handlePreviousMonth = () => {
     if (currentMonth === 0) {
@@ -54,11 +61,11 @@ export function CalendarPage() {
               <CalendarDays className="w-5 h-5 text-orange-600 dark:text-orange-400" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Calendar
+              {t('calendar.title')}
             </h1>
           </div>
           <p className="text-gray-600 dark:text-gray-400">
-            View scheduled posts in a calendar layout.
+            {t('calendar.description')}
           </p>
         </div>
       </div>
@@ -70,17 +77,17 @@ export function CalendarPage() {
           <button
             onClick={handlePreviousMonth}
             className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-            aria-label="Previous month"
+            aria-label={t('calendar.previousMonth')}
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white min-w-[180px] text-center">
-            {MONTH_NAMES[currentMonth]} {currentYear}
+            {monthNames[currentMonth]} {currentYear}
           </h2>
           <button
             onClick={handleNextMonth}
             className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-            aria-label="Next month"
+            aria-label={t('calendar.nextMonth')}
           >
             <ChevronRight className="w-5 h-5" />
           </button>
@@ -88,7 +95,7 @@ export function CalendarPage() {
             onClick={handleToday}
             className="px-3 py-2 text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
-            Today
+            {t('calendar.today')}
           </button>
         </div>
 
@@ -98,7 +105,7 @@ export function CalendarPage() {
             htmlFor="calendar-client-filter"
             className="text-sm font-medium text-gray-700 dark:text-gray-300"
           >
-            Client:
+            {t('calendar.clientLabel')}
           </label>
           <select
             id="calendar-client-filter"
@@ -106,7 +113,7 @@ export function CalendarPage() {
             onChange={(e) => setSelectedClientId(e.target.value)}
             className="px-3 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
           >
-            <option value="">All Clients</option>
+            <option value="">{t('calendar.allClients')}</option>
             {clients?.map((client: any) => (
               <option key={client.id} value={client.id}>
                 {client.name}

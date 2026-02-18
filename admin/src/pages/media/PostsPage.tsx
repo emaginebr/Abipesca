@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PostList, PostCalendar, useSocialNetworks } from 'bazzuca-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
+import { ADMIN_NAMESPACE } from '../../i18n';
 import { ROUTES } from '../../lib/constants';
 import { Plus, FileText, List, CalendarDays } from 'lucide-react';
 
@@ -9,6 +11,7 @@ type ViewMode = 'list' | 'calendar';
 
 export function PostsPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation(ADMIN_NAMESPACE);
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [selectedClientId, setSelectedClientId] = useState<string>('');
   const { clients } = useSocialNetworks();
@@ -26,7 +29,7 @@ export function PostsPage() {
   };
 
   const handlePublish = (post: any) => {
-    toast.success(`Post "${post.title || 'Untitled'}" published successfully.`);
+    toast.success(t('posts.publishedSuccess', { title: post.title || t('posts.untitled') }));
   };
 
   return (
@@ -39,11 +42,11 @@ export function PostsPage() {
               <FileText className="w-5 h-5 text-green-600 dark:text-green-400" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              Posts
+              {t('posts.title')}
             </h1>
           </div>
           <p className="text-gray-600 dark:text-gray-400">
-            Create, schedule, and manage social media posts across all platforms.
+            {t('posts.description')}
           </p>
         </div>
         <button
@@ -51,7 +54,7 @@ export function PostsPage() {
           className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
         >
           <Plus className="w-4 h-4" />
-          Create Post
+          {t('posts.createPost')}
         </button>
       </div>
 
@@ -68,7 +71,7 @@ export function PostsPage() {
             }`}
           >
             <List className="w-4 h-4" />
-            List
+            {t('posts.viewList')}
           </button>
           <button
             onClick={() => setViewMode('calendar')}
@@ -79,7 +82,7 @@ export function PostsPage() {
             }`}
           >
             <CalendarDays className="w-4 h-4" />
-            Calendar
+            {t('posts.viewCalendar')}
           </button>
         </div>
 
@@ -89,7 +92,7 @@ export function PostsPage() {
             htmlFor="client-filter"
             className="text-sm font-medium text-gray-700 dark:text-gray-300"
           >
-            Client:
+            {t('posts.clientLabel')}
           </label>
           <select
             id="client-filter"
@@ -97,7 +100,7 @@ export function PostsPage() {
             onChange={(e) => setSelectedClientId(e.target.value)}
             className="px-3 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:border-transparent"
           >
-            <option value="">All Clients</option>
+            <option value="">{t('posts.allClients')}</option>
             {clients?.map((client: any) => (
               <option key={client.id} value={client.id}>
                 {client.name}

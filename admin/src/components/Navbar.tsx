@@ -1,8 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from 'nauth-react';
-import { APP_NAME, ROUTES } from '../lib/constants';
+import { useTranslation } from 'react-i18next';
+import { ROUTES } from '../lib/constants';
+import { ADMIN_NAMESPACE } from '../i18n';
 import { UserMenu } from './UserMenu';
+import { LanguageSelector } from './LanguageSelector';
 import {
   LayoutDashboard,
   Newspaper,
@@ -19,6 +22,7 @@ import {
 
 export function Navbar() {
   const { isAuthenticated } = useAuth();
+  const { t } = useTranslation(ADMIN_NAMESPACE);
   const [newsOpen, setNewsOpen] = useState(false);
   const [campaignsOpen, setCampaignsOpen] = useState(false);
   const [usersOpen, setUsersOpen] = useState(false);
@@ -59,22 +63,19 @@ export function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-6">
-            <Link to={ROUTES.HOME} className="flex items-center gap-2.5">
+            <Link to={ROUTES.HOME} className="flex items-center">
               <img
                 src="/admin/abipesca-logo.png"
                 alt="Abipesca"
                 className="h-9 w-auto"
               />
-              <span className="text-lg font-bold text-brand-navy hidden sm:block">
-                {APP_NAME}
-              </span>
             </Link>
 
             {isAuthenticated && (
               <>
                 <Link to={ROUTES.DASHBOARD} className={linkClass}>
                   <LayoutDashboard className="w-4 h-4" />
-                  Dashboard
+                  {t('navbar.dashboard')}
                 </Link>
 
                 {/* News Dropdown */}
@@ -84,7 +85,7 @@ export function Navbar() {
                     className={linkClass}
                   >
                     <Newspaper className="w-4 h-4" />
-                    News
+                    {t('navbar.news')}
                     <ChevronDown className={`w-3 h-3 transition-transform ${newsOpen ? 'rotate-180' : ''}`} />
                   </button>
                   {newsOpen && (
@@ -95,7 +96,7 @@ export function Navbar() {
                         className={`${dropdownItemClass} rounded-t-lg`}
                       >
                         <FileText className="w-4 h-4" />
-                        Articles
+                        {t('navbar.articles')}
                       </Link>
                       <Link
                         to={ROUTES.CATEGORIES}
@@ -103,7 +104,7 @@ export function Navbar() {
                         className={dropdownItemClass}
                       >
                         <FolderOpen className="w-4 h-4" />
-                        Categories
+                        {t('navbar.categories')}
                       </Link>
                       <Link
                         to={ROUTES.TAGS}
@@ -111,7 +112,7 @@ export function Navbar() {
                         className={`${dropdownItemClass} rounded-b-lg`}
                       >
                         <Tag className="w-4 h-4" />
-                        Tags
+                        {t('navbar.tags')}
                       </Link>
                     </div>
                   )}
@@ -124,7 +125,7 @@ export function Navbar() {
                     className={linkClass}
                   >
                     <Megaphone className="w-4 h-4" />
-                    Campaigns
+                    {t('navbar.campaigns')}
                     <ChevronDown className={`w-3 h-3 transition-transform ${campaignsOpen ? 'rotate-180' : ''}`} />
                   </button>
                   {campaignsOpen && (
@@ -135,7 +136,7 @@ export function Navbar() {
                         className={`${dropdownItemClass} rounded-t-lg`}
                       >
                         <Users className="w-4 h-4" />
-                        Clients
+                        {t('navbar.clients')}
                       </Link>
                       <Link
                         to={ROUTES.POSTS}
@@ -143,7 +144,7 @@ export function Navbar() {
                         className={dropdownItemClass}
                       >
                         <FileText className="w-4 h-4" />
-                        Posts
+                        {t('navbar.posts')}
                       </Link>
                       <Link
                         to={ROUTES.CALENDAR}
@@ -151,7 +152,7 @@ export function Navbar() {
                         className={`${dropdownItemClass} rounded-b-lg`}
                       >
                         <Calendar className="w-4 h-4" />
-                        Calendar
+                        {t('navbar.calendar')}
                       </Link>
                     </div>
                   )}
@@ -164,7 +165,7 @@ export function Navbar() {
                     className={linkClass}
                   >
                     <Users className="w-4 h-4" />
-                    Users
+                    {t('navbar.users')}
                     <ChevronDown className={`w-3 h-3 transition-transform ${usersOpen ? 'rotate-180' : ''}`} />
                   </button>
                   {usersOpen && (
@@ -175,7 +176,7 @@ export function Navbar() {
                         className={`${dropdownItemClass} rounded-t-lg`}
                       >
                         <Search className="w-4 h-4" />
-                        Search Users
+                        {t('navbar.searchUsers')}
                       </Link>
                       <Link
                         to={ROUTES.ROLES}
@@ -183,7 +184,7 @@ export function Navbar() {
                         className={`${dropdownItemClass} rounded-b-lg`}
                       >
                         <ShieldCheck className="w-4 h-4" />
-                        Roles
+                        {t('navbar.roles')}
                       </Link>
                     </div>
                   )}
@@ -193,6 +194,7 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center gap-4">
+            <LanguageSelector />
             {isAuthenticated ? (
               <UserMenu />
             ) : (
@@ -201,13 +203,13 @@ export function Navbar() {
                   to={ROUTES.LOGIN}
                   className="px-4 py-2 text-sm font-medium text-brand-navy/80 hover:text-brand-blue transition-colors"
                 >
-                  Login
+                  {t('navbar.login')}
                 </Link>
                 <Link
                   to={ROUTES.REGISTER}
                   className="px-4 py-2 text-sm font-medium bg-brand-blue text-white rounded-lg hover:bg-blue-600 transition-colors"
                 >
-                  Sign Up
+                  {t('navbar.signUp')}
                 </Link>
               </div>
             )}

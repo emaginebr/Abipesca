@@ -30,8 +30,11 @@ services:
       dockerfile: Dockerfile
     container_name: abipesca-ntools-api
     restart: unless-stopped
+    ports:
+      - "8080:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:8080
       - ChatGPT__ApiKey=${CHATGPT_APIKEY}
       - ChatGPT__ApiUrl=${CHATGPT_APIURL}
       - ChatGPT__Model=${CHATGPT_MODEL}
@@ -44,6 +47,12 @@ services:
       - S3__Endpoint=${S3__ENDPOINT}
     networks:
       - abipesca-network
+#    healthcheck:
+#      test: ["CMD-SHELL", "curl -f http://localhost:8080/ || exit 1"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#      start_period: 15s
 
   nauth-api:
     build:
@@ -56,10 +65,12 @@ services:
       - ASPNETCORE_URLS=http://+:80
       - ConnectionStrings__NAuthContext=Host=postgres;Port=5432;Database=${DB_NAME:-abipesca};Username=${DB_USER:-abipesca_user};Password=${DB_PASSWORD}
       - NAuth__JwtSecret=${JWT_SECRET}
-      - NTools__ApiUrl=http://ntools-api:80
+      - NTools__ApiUrl=http://ntools-api:8080
     depends_on:
       postgres:
         condition: service_healthy
+#      ntools-api:
+#        condition: service_healthy
     networks:
       - abipesca-network
     healthcheck:
@@ -80,10 +91,12 @@ services:
       - ASPNETCORE_URLS=http://+:8080
       - ConnectionStrings__NNewsContext=Host=postgres;Port=5432;Database=${DB_NAME:-abipesca};Username=${DB_USER:-abipesca_user};Password=${DB_PASSWORD}
       - NAuth__JwtSecret=${JWT_SECRET}
-      - NTools__ApiUrl=http://ntools-api:80
+      - NTools__ApiUrl=http://ntools-api:8080
     depends_on:
       postgres:
         condition: service_healthy
+#      ntools-api:
+#        condition: service_healthy
     networks:
       - abipesca-network
 
@@ -98,10 +111,12 @@ services:
       - ASPNETCORE_URLS=http://+:8080
       - ConnectionStrings__BazzucaContext=Host=postgres;Port=5432;Database=${DB_NAME:-abipesca};Username=${DB_USER:-abipesca_user};Password=${DB_PASSWORD}
       - NAuth__JwtSecret=${JWT_SECRET}
-      - NTools__ApiUrl=http://ntools-api:80
+      - NTools__ApiUrl=http://ntools-api:8080
     depends_on:
       postgres:
         condition: service_healthy
+#      ntools-api:
+#        condition: service_healthy
     networks:
       - abipesca-network
     healthcheck:

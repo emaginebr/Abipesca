@@ -1,5 +1,8 @@
 import { useAuth } from 'nauth-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { ADMIN_NAMESPACE } from '../../i18n';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { ROUTES } from '../../lib/constants';
 import {
   User,
@@ -15,11 +18,15 @@ import { toast } from 'sonner';
 
 export function ProfilePage() {
   const { user } = useAuth();
+  const { t } = useTranslation(ADMIN_NAMESPACE);
+  const { language } = useLanguage();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  const dateLocale = language === 'pt' ? 'pt-BR' : 'en-US';
 
   const handleDeleteAccount = async () => {
     console.log('Delete account functionality pending API implementation');
-    toast.warning('Account deletion is not yet implemented in the API');
+    toast.warning(t('profile.deletionNotImplemented'));
     setShowDeleteConfirm(false);
   };
 
@@ -34,7 +41,7 @@ export function ProfilePage() {
           </div>
           <div className="flex-1">
             <h1 className="text-3xl font-bold mb-2 text-brand-navy">
-              {user?.name || 'User Profile'}
+              {user?.name || t('profile.title')}
             </h1>
             <p className="text-gray-600 mb-4">
               {user?.email}
@@ -45,7 +52,7 @@ export function ProfilePage() {
                 className="inline-flex items-center gap-2 px-4 py-2 bg-brand-blue text-white rounded-lg hover:bg-blue-600 transition-colors"
               >
                 <KeyRound className="w-4 h-4" />
-                Change Password
+                {t('profile.changePassword')}
               </Link>
             </div>
           </div>
@@ -55,7 +62,7 @@ export function ProfilePage() {
       {/* Account Information */}
       <div className="bg-white rounded-xl p-8 border border-gray-200">
         <h2 className="text-2xl font-bold mb-6 text-brand-navy">
-          Account Information
+          {t('profile.accountInformation')}
         </h2>
         <div className="space-y-6">
           <div className="flex items-start gap-4">
@@ -64,10 +71,10 @@ export function ProfilePage() {
             </div>
             <div className="flex-1">
               <label className="text-sm font-medium text-gray-600">
-                Full Name
+                {t('profile.fullName')}
               </label>
               <p className="text-lg font-semibold text-brand-navy">
-                {user?.name || 'Not set'}
+                {user?.name || t('profile.notSet')}
               </p>
             </div>
           </div>
@@ -78,7 +85,7 @@ export function ProfilePage() {
             </div>
             <div className="flex-1">
               <label className="text-sm font-medium text-gray-600">
-                Email Address
+                {t('profile.emailAddress')}
               </label>
               <p className="text-lg font-semibold text-brand-navy">
                 {user?.email}
@@ -92,11 +99,11 @@ export function ProfilePage() {
             </div>
             <div className="flex-1">
               <label className="text-sm font-medium text-gray-600">
-                Account Status
+                {t('profile.accountStatus')}
               </label>
               <div className="flex items-center gap-2 mt-1">
                 <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700">
-                  Active
+                  {t('profile.active')}
                 </span>
               </div>
             </div>
@@ -108,11 +115,11 @@ export function ProfilePage() {
             </div>
             <div className="flex-1">
               <label className="text-sm font-medium text-gray-600">
-                Member Since
+                {t('profile.memberSince')}
               </label>
               <p className="text-lg font-semibold text-brand-navy">
                 {user?.createAt
-                  ? new Date(user.createAt).toLocaleDateString('en-US', {
+                  ? new Date(user.createAt).toLocaleDateString(dateLocale, {
                       year: 'numeric',
                       month: 'long',
                       day: 'numeric',
@@ -127,11 +134,10 @@ export function ProfilePage() {
       {/* Danger Zone */}
       <div className="bg-white rounded-xl p-8 border-2 border-red-200">
         <h2 className="text-2xl font-bold mb-2 text-red-600">
-          Danger Zone
+          {t('profile.dangerZone')}
         </h2>
         <p className="text-gray-600 mb-6">
-          Once you delete your account, there is no going back. Please be
-          certain.
+          {t('profile.dangerZoneDescription')}
         </p>
 
         {!showDeleteConfirm ? (
@@ -140,7 +146,7 @@ export function ProfilePage() {
             className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
           >
             <Trash2 className="w-4 h-4" />
-            Delete Account
+            {t('profile.deleteAccount')}
           </button>
         ) : (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
@@ -148,11 +154,10 @@ export function ProfilePage() {
               <AlertTriangle className="w-6 h-6 text-red-600 flex-shrink-0" />
               <div>
                 <p className="font-semibold text-red-900 mb-2">
-                  Are you absolutely sure?
+                  {t('profile.areYouAbsolutelySure')}
                 </p>
                 <p className="text-sm text-red-800">
-                  This action cannot be undone. This will permanently delete
-                  your account and remove all your data from our servers.
+                  {t('profile.deleteWarning')}
                 </p>
               </div>
             </div>
@@ -161,13 +166,13 @@ export function ProfilePage() {
                 onClick={handleDeleteAccount}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
               >
-                Yes, delete my account
+                {t('profile.yesDeleteAccount')}
               </button>
               <button
                 onClick={() => setShowDeleteConfirm(false)}
                 className="px-4 py-2 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 transition-colors"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
             </div>
           </div>

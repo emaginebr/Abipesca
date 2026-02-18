@@ -2,6 +2,8 @@ import { LoginForm } from 'nauth-react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { useAuth } from 'nauth-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
+import { ADMIN_NAMESPACE } from '../i18n';
 import { ROUTES } from '../lib/constants';
 import {
   Card,
@@ -15,6 +17,7 @@ import {
 export function LoginPage() {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading } = useAuth();
+  const { t } = useTranslation(ADMIN_NAMESPACE);
 
   if (isLoading) {
     return (
@@ -29,7 +32,7 @@ export function LoginPage() {
   }
 
   const handleSuccess = () => {
-    toast.success('Login successful! Welcome back.');
+    toast.success(t('login.successMessage'));
 
     const redirectTo = sessionStorage.getItem('redirectAfterLogin');
     if (redirectTo) {
@@ -41,7 +44,7 @@ export function LoginPage() {
   };
 
   const handleError = (error: Error) => {
-    toast.error(error.message || 'Login failed. Please try again.');
+    toast.error(error.message || t('login.errorFallback'));
   };
 
   return (
@@ -56,9 +59,9 @@ export function LoginPage() {
                 className="h-16 w-auto"
               />
             </div>
-            <CardTitle>Welcome Back</CardTitle>
+            <CardTitle>{t('login.title')}</CardTitle>
             <CardDescription>
-              Sign in to your account to continue
+              {t('login.description')}
             </CardDescription>
           </CardHeader>
 
@@ -76,16 +79,16 @@ export function LoginPage() {
               to={ROUTES.FORGOT_PASSWORD}
               className="text-sm text-brand-blue hover:underline font-medium"
             >
-              Forgot your password?
+              {t('login.forgotPassword')}
             </Link>
 
             <div className="text-sm text-gray-600">
-              Don't have an account?{' '}
+              {t('login.noAccount')}{' '}
               <Link
                 to={ROUTES.REGISTER}
                 className="text-brand-blue hover:underline font-medium"
               >
-                Sign up
+                {t('login.signUp')}
               </Link>
             </div>
           </CardFooter>

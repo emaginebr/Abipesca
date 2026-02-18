@@ -1,18 +1,21 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { PostEditor } from 'bazzuca-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
+import { ADMIN_NAMESPACE } from '../../i18n';
 import { ROUTES } from '../../lib/constants';
 import { ArrowLeft } from 'lucide-react';
 
 export function PostEditPage() {
   const { postId } = useParams<{ postId: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation(ADMIN_NAMESPACE);
 
   const isEditing = Boolean(postId);
 
   const handleSave = () => {
     toast.success(
-      isEditing ? 'Post updated successfully.' : 'Post created successfully.'
+      isEditing ? t('postEdit.updatedSuccess') : t('postEdit.createdSuccess')
     );
     navigate(ROUTES.POSTS);
   };
@@ -33,18 +36,18 @@ export function PostEditPage() {
         className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
-        Back to Posts
+        {t('postEdit.backToPosts')}
       </button>
 
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          {isEditing ? 'Edit Post' : 'Create Post'}
+          {isEditing ? t('postEdit.editTitle') : t('postEdit.createTitle')}
         </h1>
         <p className="mt-2 text-gray-600 dark:text-gray-400">
           {isEditing
-            ? 'Update your post content and scheduling options.'
-            : 'Compose a new post and schedule it for publishing.'}
+            ? t('postEdit.editDescription')
+            : t('postEdit.createDescription')}
         </p>
       </div>
 

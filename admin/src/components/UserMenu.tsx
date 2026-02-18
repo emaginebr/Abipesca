@@ -1,11 +1,14 @@
 import { useAuth } from 'nauth-react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { LogOut, User, KeyRound } from 'lucide-react';
 import { ROUTES } from '../lib/constants';
+import { ADMIN_NAMESPACE } from '../i18n';
 
 export function UserMenu() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation(ADMIN_NAMESPACE);
 
   const handleLogout = async () => {
     await logout();
@@ -34,18 +37,18 @@ export function UserMenu() {
         <div className="py-2">
           <Link to={ROUTES.PROFILE} className="flex items-center gap-2 px-4 py-2 text-sm text-brand-navy/80 hover:bg-brand-blue/5 hover:text-brand-blue transition-colors">
             <User className="w-4 h-4" />
-            Profile
+            {t('userMenu.profile')}
           </Link>
           <Link to={ROUTES.CHANGE_PASSWORD} className="flex items-center gap-2 px-4 py-2 text-sm text-brand-navy/80 hover:bg-brand-blue/5 hover:text-brand-blue transition-colors">
             <KeyRound className="w-4 h-4" />
-            Change Password
+            {t('userMenu.changePassword')}
           </Link>
         </div>
 
         <div className="border-t border-gray-200 p-2">
           <button onClick={handleLogout} className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded transition-colors">
             <LogOut className="w-4 h-4" />
-            Logout
+            {t('userMenu.logout')}
           </button>
         </div>
       </div>

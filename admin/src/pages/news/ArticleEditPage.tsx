@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useArticles, useCategories, ArticleEditor } from 'nnews-react';
 import type { Article, ArticleInput, ArticleUpdate } from 'nnews-react';
+import { useTranslation } from 'react-i18next';
+import { ADMIN_NAMESPACE } from '../../i18n';
 import { ROUTES } from '../../lib/constants';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import { toast } from 'sonner';
@@ -10,6 +12,7 @@ import { ArrowLeft, FileEdit, FilePlus, Loader2, AlertCircle } from 'lucide-reac
 export function ArticleEditPage() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const { t } = useTranslation(ADMIN_NAMESPACE);
   const { getArticleById, createArticle, updateArticle, loading: saving } = useArticles();
   const { categories, fetchCategories } = useCategories();
 
@@ -29,18 +32,16 @@ export function ArticleEditPage() {
       const data = await getArticleById(Number(id));
       setArticle(data);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to load article';
+      const message = err instanceof Error ? err.message : t('articles.failedToLoadArticle');
       setLoadError(message);
-      toast.error('Failed to load article');
+      toast.error(t('articles.failedToLoadArticle'));
     } finally {
       setLoadingArticle(false);
     }
-  }, [id, getArticleById]);
+  }, [id, getArticleById, t]);
 
   useEffect(() => {
-    fetchCategories().catch(() => {
-      // Categories are optional, don't block the editor
-    });
+    fetchCategories().catch(() => {});
   }, [fetchCategories]);
 
   useEffect(() => {
@@ -53,14 +54,14 @@ export function ArticleEditPage() {
     try {
       if (isEditMode && 'articleId' in data) {
         await updateArticle(data as ArticleUpdate);
-        toast.success('Article updated successfully');
+        toast.success(t('articles.updatedSuccess'));
       } else {
         await createArticle(data as ArticleInput);
-        toast.success('Article created successfully');
+        toast.success(t('articles.createdSuccess'));
       }
       navigate(ROUTES.ARTICLES);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to save article';
+      const message = err instanceof Error ? err.message : t('articles.failedToSave');
       toast.error(message);
     }
   };
@@ -77,7 +78,7 @@ export function ArticleEditPage() {
         className="mb-4 inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-brand-navy transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
-        Back to Articles
+        {t('articles.backToArticles')}
       </button>
 
       <Card>
@@ -88,7 +89,7 @@ export function ArticleEditPage() {
             ) : (
               <FilePlus className="h-8 w-8 text-green-600" />
             )}
-            <CardTitle>{isEditMode ? 'Edit Article' : 'New Article'}</CardTitle>
+            <CardTitle>{isEditMode ? t('articles.editTitle') : t('articles.newArticle')}</CardTitle>
           </div>
         </CardHeader>
 
@@ -97,7 +98,7 @@ export function ArticleEditPage() {
           {loadingArticle && (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-brand-blue" />
-              <span className="ml-3 text-gray-600">Loading article...</span>
+              <span className="ml-3 text-gray-600">{t('articles.loadingArticle')}</span>
             </div>
           )}
 
@@ -106,7 +107,7 @@ export function ArticleEditPage() {
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <AlertCircle className="h-12 w-12 text-red-500 mb-3" />
               <p className="text-red-600 font-medium">
-                Error loading article
+                {t('articles.errorLoadingArticle')}
               </p>
               <p className="text-sm text-gray-500 mt-1">
                 {loadError}
@@ -116,13 +117,13 @@ export function ArticleEditPage() {
                   onClick={loadArticle}
                   className="rounded-lg bg-brand-blue px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 transition-colors"
                 >
-                  Try Again
+                  {t('common.tryAgain')}
                 </button>
                 <button
                   onClick={handleCancel}
                   className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                 >
-                  Go Back
+                  {t('common.goBack')}
                 </button>
               </div>
             </div>

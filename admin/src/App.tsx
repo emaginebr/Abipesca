@@ -2,8 +2,11 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { NAuthProvider, useAuth } from 'nauth-react';
 import { NNewsProvider } from 'nnews-react';
 import { BazzucaProvider } from 'bazzuca-react';
+import { I18nextProvider } from 'react-i18next';
 import { Toaster } from 'sonner';
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
+import i18n from './i18n';
+import { LanguageProvider, useLanguage } from './contexts/LanguageContext';
 import { Layout } from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { HomePage } from './pages/HomePage';
@@ -102,22 +105,40 @@ function AppContent() {
   );
 }
 
-function App() {
+function AppWithLanguage() {
+  const { language } = useLanguage();
+
+  const onAuthChange = useCallback((user: unknown) => {
+    console.log('Auth state changed:', user);
+  }, []);
+
+  const nauthConfig = useMemo(
+    () => ({
+      apiUrl: import.meta.env.VITE_API_URL || '/api/nauth',
+      enableFingerprinting: true,
+      redirectOnUnauthorized: ROUTES.LOGIN,
+      language,
+      onAuthChange,
+    }),
+    [language, onAuthChange]
+  );
+
   return (
     <BrowserRouter basename="/admin">
-      <NAuthProvider
-        config={{
-          apiUrl: import.meta.env.VITE_API_URL || '/api/nauth',
-          enableFingerprinting: true,
-          redirectOnUnauthorized: ROUTES.LOGIN,
-          onAuthChange: (user) => {
-            console.log('Auth state changed:', user);
-          },
-        }}
-      >
+      <NAuthProvider config={nauthConfig}>
         <AppContent />
       </NAuthProvider>
     </BrowserRouter>
+  );
+}
+
+function App() {
+  return (
+    <I18nextProvider i18n={i18n}>
+      <LanguageProvider>
+        <AppWithLanguage />
+      </LanguageProvider>
+    </I18nextProvider>
   );
 }
 

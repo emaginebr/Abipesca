@@ -1,6 +1,8 @@
 import { ResetPasswordForm } from 'nauth-react';
 import { useNavigate, useParams, Navigate } from 'react-router-dom';
 import { useAuth } from 'nauth-react';
+import { useTranslation } from 'react-i18next';
+import { ADMIN_NAMESPACE } from '../../i18n';
 import { ROUTES } from '../../lib/constants';
 import { CheckCircle } from 'lucide-react';
 import { useState } from 'react';
@@ -9,6 +11,7 @@ export function ResetPasswordPage() {
   const navigate = useNavigate();
   const { hash } = useParams<{ hash: string }>();
   const { isAuthenticated, isLoading } = useAuth();
+  const { t } = useTranslation(ADMIN_NAMESPACE);
   const [resetSuccess, setResetSuccess] = useState(false);
 
   if (isLoading) {
@@ -19,12 +22,10 @@ export function ResetPasswordPage() {
     );
   }
 
-  // Redirect authenticated users to dashboard
   if (isAuthenticated) {
     return <Navigate to={ROUTES.DASHBOARD} replace />;
   }
 
-  // Redirect if no hash provided
   if (!hash) {
     return <Navigate to={ROUTES.LOGIN} replace />;
   }
@@ -44,10 +45,10 @@ export function ResetPasswordPage() {
             <>
               <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold mb-2 dark:text-white">
-                  Reset Password
+                  {t('resetPassword.title')}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Enter your new password below
+                  {t('resetPassword.description')}
                 </p>
               </div>
 
@@ -63,10 +64,10 @@ export function ResetPasswordPage() {
                   <CheckCircle className="w-8 h-8 text-green-600 dark:text-green-400" />
                 </div>
                 <h1 className="text-2xl font-bold mb-2 dark:text-white">
-                  Password Reset Successfully
+                  {t('resetPassword.successTitle')}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  Your password has been reset. Redirecting to login...
+                  {t('resetPassword.successDescription')}
                 </p>
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
               </div>

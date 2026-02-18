@@ -1,6 +1,9 @@
 import { useAuth } from 'nauth-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ROUTES } from '../../lib/constants';
+import { ADMIN_NAMESPACE } from '../../i18n';
+import { useLanguage } from '../../contexts/LanguageContext';
 import {
   User,
   KeyRound,
@@ -12,19 +15,23 @@ import {
 
 export function DashboardPage() {
   const { user } = useAuth();
+  const { t } = useTranslation(ADMIN_NAMESPACE);
+  const { language } = useLanguage();
+
+  const dateLocale = language === 'pt' ? 'pt-BR' : 'en-US';
 
   const quickLinks = [
     {
       icon: <User className="w-6 h-6" />,
-      title: 'View Profile',
-      description: 'Manage your account information',
+      title: t('dashboard.viewProfile'),
+      description: t('dashboard.manageInfo'),
       to: ROUTES.PROFILE,
       color: 'bg-brand-blue/10 text-brand-blue',
     },
     {
       icon: <KeyRound className="w-6 h-6" />,
-      title: 'Change Password',
-      description: 'Update your password',
+      title: t('dashboard.changePassword'),
+      description: t('dashboard.updatePassword'),
       to: ROUTES.CHANGE_PASSWORD,
       color: 'bg-brand-orange/10 text-brand-orange',
     },
@@ -33,14 +40,14 @@ export function DashboardPage() {
   const userStats = [
     {
       icon: <Mail className="w-5 h-5" />,
-      label: 'Email',
+      label: t('dashboard.email'),
       value: user?.email || 'N/A',
     },
     {
       icon: <Calendar className="w-5 h-5" />,
-      label: 'Member Since',
+      label: t('dashboard.memberSince'),
       value: user?.createAt
-        ? new Date(user.createAt).toLocaleDateString('en-US', {
+        ? new Date(user.createAt).toLocaleDateString(dateLocale, {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -49,12 +56,12 @@ export function DashboardPage() {
     },
     {
       icon: <Shield className="w-5 h-5" />,
-      label: 'Account Status',
-      value: 'Active',
+      label: t('dashboard.accountStatus'),
+      value: t('dashboard.active'),
     },
     {
       icon: <Activity className="w-5 h-5" />,
-      label: 'User ID',
+      label: t('dashboard.userId'),
       value: user?.userId
         ? String(user.userId).substring(0, 8) + '...'
         : 'N/A',
@@ -66,10 +73,10 @@ export function DashboardPage() {
       {/* Welcome Section */}
       <div className="bg-brand-navy rounded-2xl p-6 md:p-8 text-white shadow-lg">
         <h1 className="text-2xl md:text-3xl font-bold mb-2">
-          Welcome back, {user?.name || user?.email}!
+          {t('dashboard.welcomeBack', { name: user?.name || user?.email })}
         </h1>
         <p className="text-blue-200 text-sm md:text-base">
-          Manage your account and explore all features
+          {t('dashboard.manageAccount')}
         </p>
       </div>
 
@@ -98,7 +105,7 @@ export function DashboardPage() {
       {/* Quick Links */}
       <div>
         <h2 className="text-xl md:text-2xl font-bold mb-4 text-brand-navy">
-          Quick Actions
+          {t('dashboard.quickActions')}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {quickLinks.map((link, index) => (
@@ -126,20 +133,20 @@ export function DashboardPage() {
       {/* Account Info */}
       <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
         <h2 className="text-xl font-bold mb-6 text-brand-navy">
-          Account Information
+          {t('dashboard.accountInfo')}
         </h2>
         <div className="space-y-1">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 border-b border-gray-200 gap-2">
             <span className="text-sm font-medium text-gray-600">
-              Full Name
+              {t('dashboard.fullName')}
             </span>
             <span className="font-semibold text-brand-navy">
-              {user?.name || 'Not set'}
+              {user?.name || t('dashboard.notSet')}
             </span>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 border-b border-gray-200 gap-2">
             <span className="text-sm font-medium text-gray-600">
-              Email Address
+              {t('dashboard.emailAddress')}
             </span>
             <span className="font-semibold text-brand-navy break-all">
               {user?.email}
@@ -147,15 +154,15 @@ export function DashboardPage() {
           </div>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 border-b border-gray-200 gap-2">
             <span className="text-sm font-medium text-gray-600">
-              Account Status
+              {t('dashboard.accountStatus')}
             </span>
             <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700 inline-flex items-center justify-center">
-              Active
+              {t('dashboard.active')}
             </span>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 gap-2">
             <span className="text-sm font-medium text-gray-600">
-              User ID
+              {t('dashboard.userId')}
             </span>
             <span className="font-mono text-sm font-semibold text-brand-navy break-all">
               {user?.userId || 'N/A'}

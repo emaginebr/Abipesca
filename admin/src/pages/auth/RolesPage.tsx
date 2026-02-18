@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { RoleList, RoleForm } from 'nauth-react';
 import type { RoleInfo } from 'nauth-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
+import { ADMIN_NAMESPACE } from '../../i18n';
 import { Card, CardContent } from '../../components/ui/Card';
 import {
   Modal,
@@ -15,6 +17,7 @@ import { X } from 'lucide-react';
 type ModalMode = 'create' | 'edit' | null;
 
 export default function RolesPage() {
+  const { t } = useTranslation(ADMIN_NAMESPACE);
   const [modalMode, setModalMode] = useState<ModalMode>(null);
   const [selectedRole, setSelectedRole] = useState<RoleInfo | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -32,8 +35,8 @@ export default function RolesPage() {
   const handleFormSuccess = (role: RoleInfo) => {
     const message =
       modalMode === 'create'
-        ? `Role "${role.name}" created successfully!`
-        : `Role "${role.name}" updated successfully!`;
+        ? t('roles.createdSuccess', { name: role.name })
+        : t('roles.updatedSuccess', { name: role.name });
 
     toast.success(message);
     setModalMode(null);
@@ -51,22 +54,22 @@ export default function RolesPage() {
   };
 
   const handleDeleteSuccess = () => {
-    toast.success('Role deleted successfully!');
+    toast.success(t('roles.deletedSuccess'));
     setRefreshTrigger((prev) => prev + 1);
   };
 
   const handleDeleteError = (error: Error) => {
-    toast.error(`Failed to delete role: ${error.message}`);
+    toast.error(t('roles.deleteError', { message: error.message }));
   };
 
   return (
     <div className="container mx-auto px-4">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-brand-navy">
-          Management Roles
+          {t('roles.title')}
         </h1>
         <p className="mt-2 text-gray-600">
-          Manage user roles and permissions
+          {t('roles.description')}
         </p>
       </div>
       <Card className="pt-5">
@@ -90,12 +93,11 @@ export default function RolesPage() {
         </CardContent>
       </Card>
 
-      {/* Modal */}
       <Modal open={modalMode !== null} onOpenChange={(open) => { if (!open) handleCancel(); }}>
         <ModalContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <ModalHeader className="flex flex-row items-center justify-between">
             <ModalTitle>
-              {modalMode === 'create' ? 'Create New Role' : 'Edit Role'}
+              {modalMode === 'create' ? t('roles.createNew') : t('roles.editRole')}
             </ModalTitle>
             <ModalClose asChild>
               <button className="text-gray-500 hover:text-gray-700 transition-colors">

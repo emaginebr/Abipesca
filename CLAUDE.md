@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **NEVER modify, edit, or write files inside submodule directories.** These are independent git repositories. If a task requires changes in a submodule, STOP and tell the user which files need changing and why, so they can do it in a dedicated session.
 
-Submodule directories: `NAuth.API/`, `NAuth.ACL/`, `NAuth.DTO/`, `NNews.API/`, `NNews.ACL/`, `NNews.DTO/`, `NTools.API/`, `NTools.ACL/`, `NTools.DTO/`, `BazzucaMedia/`, `nauth-react/`, `nnews-react/`, `nnews-app/`
+Submodule directories: `NAuth/`, `NNews/`, `zTools/`, `BazzucaMedia/`, `nauth-react/`, `nnews-react/`
 
 ## Common Commands
 
@@ -40,14 +40,14 @@ npm run type-check     # TypeScript only
 ```
 Nginx (:80)
 ├── /admin       → React SPA (built inside docker/nginx/Dockerfile)
-├── /api/nauth/  → nauth-api:80    (NAuth.API - auth, users, roles)
-├── /api/nnews/  → nnews-api:8080  (NNews.API - articles, categories, tags)
+├── /api/nauth/  → nauth-api:80    (NAuth - auth, users, roles)
+├── /api/nnews/  → nnews-api:8080  (NNews - articles, categories, tags)
 └── /api/bazzuca/→ bazzuca-api:8080 (BazzucaMedia - clients, posts, calendar)
 
 All APIs share:
 ├── postgres:5432 (single database: abipesca)
 ├── JWT_SECRET (shared JWT validation)
-└── ntools-api:80 (NTools.API - mail, ChatGPT, S3 file ops)
+└── ntools-api:8080 (zTools - mail, ChatGPT, S3 file ops)
 ```
 
 ### Admin Frontend (`admin/`)
@@ -66,7 +66,7 @@ Each API follows the same pattern:
 - .NET 8, PostgreSQL via Npgsql/EF Core
 - Connection string env var: `ConnectionStrings__<Context>Context` (NAuthContext, NNewsContext, BazzucaContext)
 - JWT auth with shared secret via `NAuth__JwtSecret`
-- NTools integration via `NTools__ApiUrl=http://ntools-api:80`
+- NTools integration via `NTools__ApiUrl=http://ntools-api:8080`
 
 ### Database
 

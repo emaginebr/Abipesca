@@ -26,7 +26,7 @@ services:
 
   ntools-api:
     build:
-      context: ./NTools.API
+      context: ./zTools
       dockerfile: Dockerfile
     container_name: abipesca-ntools-api
     restart: unless-stopped
@@ -56,7 +56,7 @@ services:
 
   nauth-api:
     build:
-      context: ./NAuth.API
+      context: ./NAuth
       dockerfile: Dockerfile
     container_name: abipesca-nauth-api
     restart: unless-stopped
@@ -82,7 +82,7 @@ services:
 
   nnews-api:
     build:
-      context: ./NNews.API
+      context: ./NNews
       dockerfile: NNews.API.Dockerfile
     container_name: abipesca-nnews-api
     restart: unless-stopped

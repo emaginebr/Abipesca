@@ -13,12 +13,11 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host "Navigating to build output..." -ForegroundColor Cyan
-Set-Location -Path ".\NAuth.ACL\bin\Release\net8.0"
+Set-Location -Path ".\NAuth\bin\Release\net8.0"
 Get-Location
 
 Write-Host "Copying DLL files to Abipesca/Lib..." -ForegroundColor Green
-Copy-Item -Path "NAuth.ACL.dll" -Destination "..\..\..\..\..\Abipesca\Lib" -Force
-Copy-Item -Path "NAuth.DTO.dll" -Destination "..\..\..\..\..\Abipesca\Lib" -Force
+Copy-Item -Path "NAuth.dll" -Destination "..\..\..\..\..\Abipesca\Lib" -Force
 
 Write-Host "NAuth libraries updated successfully!" -ForegroundColor Green
 

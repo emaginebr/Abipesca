@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useArticles } from 'nnews-react';
+import { useArticles, AIArticleGenerator } from 'nnews-react';
 import type { Article } from 'nnews-react';
 import { useTranslation } from 'react-i18next';
 import { ADMIN_NAMESPACE } from '../../i18n';
@@ -19,6 +19,7 @@ import {
   AlertCircle,
   Inbox,
   Trash2,
+  Sparkles,
 } from 'lucide-react';
 
 const PAGE_SIZE = 10;
@@ -38,6 +39,9 @@ export function ArticleListPage() {
   const { articles, loading, error, fetchArticles, deleteArticle } = useArticles();
   const [currentPage, setCurrentPage] = useState(1);
   const [deleteTarget, setDeleteTarget] = useState<{ id: number; title: string } | null>(null);
+  const [showAIModal, setShowAIModal] = useState(false);
+  const [aiMode, setAIMode] = useState<'create' | 'update'>('create');
+  const [selectedArticleId, setSelectedArticleId] = useState<number | undefined>();
 
   const statusLabels: Record<number, string> = useMemo(() => ({
     0: t('articles.statusDraft'),
@@ -77,6 +81,26 @@ export function ArticleListPage() {
     setDeleteTarget({ id: article.articleId, title: article.title });
   };
 
+  const handleAIClick = (e: React.MouseEvent, article: Article) => {
+    e.stopPropagation();
+    setAIMode('update');
+    setSelectedArticleId(article.articleId);
+    setShowAIModal(true);
+  };
+
+  const handleNewArticleWithAI = () => {
+    setAIMode('create');
+    setSelectedArticleId(undefined);
+    setShowAIModal(true);
+  };
+
+  const handleAISuccess = (article: Article) => {
+    toast.success(t(aiMode === 'create' ? 'articles.aiCreateSuccess' : 'articles.aiUpdateSuccess'));
+    setShowAIModal(false);
+    loadArticles(currentPage);
+    navigate(ROUTES.ARTICLES_EDIT(String(article.articleId)));
+  };
+
   const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
     try {
@@ -106,13 +130,22 @@ export function ArticleListPage() {
               <FileText className="h-8 w-8 text-brand-blue" />
               <CardTitle>{t('articles.title')}</CardTitle>
             </div>
-            <button
-              onClick={() => navigate(ROUTES.ARTICLES_NEW)}
-              className="inline-flex items-center gap-2 rounded-lg bg-brand-blue px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-offset-2 transition-colors"
-            >
-              <Plus className="h-4 w-4" />
-              {t('articles.newArticle')}
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={handleNewArticleWithAI}
+                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-2 text-sm font-medium text-white hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all shadow-md hover:shadow-lg"
+              >
+                <Sparkles className="h-4 w-4" />
+                {t('articles.createWithAI')}
+              </button>
+              <button
+                onClick={() => navigate(ROUTES.ARTICLES_NEW)}
+                className="inline-flex items-center gap-2 rounded-lg bg-brand-blue px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-brand-blue focus:ring-offset-2 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+                {t('articles.newArticle')}
+              </button>
+            </div>
           </div>
         </CardHeader>
 
@@ -230,13 +263,22 @@ export function ArticleListPage() {
                           {formatDate(article.dateAt || article.createdAt)}
                         </td>
                         <td className="py-4 text-right">
-                          <button
-                            onClick={(e) => handleDeleteClick(e, article)}
-                            className="inline-flex items-center rounded-md p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                            title={t('articles.deleteTooltip')}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
+                          <div className="flex items-center justify-end gap-1">
+                            <button
+                              onClick={(e) => handleAIClick(e, article)}
+                              className="inline-flex items-center rounded-md p-1.5 text-gray-400 hover:text-purple-600 hover:bg-purple-50 transition-colors"
+                              title={t('articles.aiUpdateTooltip')}
+                            >
+                              <Sparkles className="h-4 w-4" />
+                            </button>
+                            <button
+                              onClick={(e) => handleDeleteClick(e, article)}
+                              className="inline-flex items-center rounded-md p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                              title={t('articles.deleteTooltip')}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -295,6 +337,15 @@ export function ArticleListPage() {
         confirmLabel={t('common.delete')}
         cancelLabel={t('common.cancel')}
         variant="danger"
+      />
+
+      {/* AI Article Generator Modal */}
+      <AIArticleGenerator
+        mode={aiMode}
+        articleId={selectedArticleId}
+        isOpen={showAIModal}
+        onSuccess={handleAISuccess}
+        onClose={() => setShowAIModal(false)}
       />
     </div>
   );

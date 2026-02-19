@@ -189,6 +189,10 @@ const en = {
     updatedSuccess: 'Article updated successfully',
     createdSuccess: 'Article created successfully',
     failedToSave: 'Failed to save article',
+    createWithAI: 'Create with AI',
+    aiUpdateTooltip: 'Update with AI',
+    aiCreateSuccess: 'Article created successfully with AI!',
+    aiUpdateSuccess: 'Article updated successfully with AI!',
   },
   categories: {
     title: 'Categories',

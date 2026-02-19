@@ -34,6 +34,7 @@ import { ROUTES } from './lib/constants';
 
 function AppContent() {
   const { token } = useAuth();
+  const { language } = useLanguage();
 
   // Auth headers - changes reference when token changes,
   // which causes providers to recreate their axios instances
@@ -47,8 +48,9 @@ function AppContent() {
     () => ({
       apiUrl: import.meta.env.VITE_NNEWS_API_URL || '/api/nnews',
       headers: authHeaders,
+      language,
     }),
-    [authHeaders]
+    [authHeaders, language]
   );
 
   const bazzucaConfig = useMemo(

@@ -189,6 +189,10 @@ const pt = {
     updatedSuccess: 'Artigo atualizado com sucesso',
     createdSuccess: 'Artigo criado com sucesso',
     failedToSave: 'Falha ao salvar artigo',
+    createWithAI: 'Criar com IA',
+    aiUpdateTooltip: 'Atualizar com IA',
+    aiCreateSuccess: 'Artigo criado com sucesso pela IA!',
+    aiUpdateSuccess: 'Artigo atualizado com sucesso pela IA!',
   },
   categories: {
     title: 'Categorias',

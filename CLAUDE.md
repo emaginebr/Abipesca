@@ -47,7 +47,7 @@ Nginx (:80)
 All APIs share:
 ├── postgres:5432 (single database: abipesca)
 ├── JWT_SECRET (shared JWT validation)
-└── ntools-api:8080 (zTools - mail, ChatGPT, S3 file ops)
+└── ztools-api:8080 (zTools - mail, ChatGPT, S3 file ops)
 ```
 
 ### Admin Frontend (`admin/`)
@@ -66,7 +66,7 @@ Each API follows the same pattern:
 - .NET 8, PostgreSQL via Npgsql/EF Core
 - Connection string env var: `ConnectionStrings__<Context>Context` (NAuthContext, NNewsContext, BazzucaContext)
 - JWT auth with shared secret via `NAuth__JwtSecret`
-- NTools integration via `NTools__ApiUrl=http://ntools-api:8080`
+- zTools integration via `zTools__ApiUrl=http://ztools-api:8080`
 
 ### Database
 

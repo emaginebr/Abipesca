@@ -24,11 +24,11 @@ services:
       timeout: 5s
       retries: 5
 
-  ntools-api:
+  ztools-api:
     build:
       context: ./zTools
       dockerfile: Dockerfile
-    container_name: abipesca-ntools-api
+    container_name: abipesca-ztools-api
     restart: unless-stopped
     ports:
       - "8080:8080"
@@ -59,7 +59,7 @@ services:
       - ASPNETCORE_URLS=http://+:80
       - ConnectionStrings__NAuthContext=Host=postgres;Port=5432;Database=${DB_NAME:-abipesca};Username=${DB_USER:-abipesca_user};Password=${DB_PASSWORD}
       - NAuth__JwtSecret=${JWT_SECRET}
-      - NTools__ApiUrl=http://ntools-api:8080
+      - zTools__ApiUrl=http://ztools-api:8080
     depends_on:
       postgres:
         condition: service_healthy
@@ -83,7 +83,7 @@ services:
       - ASPNETCORE_URLS=http://+:8080
       - ConnectionStrings__NNewsContext=Host=postgres;Port=5432;Database=${DB_NAME:-abipesca};Username=${DB_USER:-abipesca_user};Password=${DB_PASSWORD}
       - NAuth__JwtSecret=${JWT_SECRET}
-      - NTools__ApiUrl=http://ntools-api:8080
+      - zTools__ApiUrl=http://ztools-api:8080
     depends_on:
       postgres:
         condition: service_healthy
@@ -101,7 +101,7 @@ services:
       - ASPNETCORE_URLS=http://+:8080
       - ConnectionStrings__BazzucaContext=Host=postgres;Port=5432;Database=${DB_NAME:-abipesca};Username=${DB_USER:-abipesca_user};Password=${DB_PASSWORD}
       - NAuth__JwtSecret=${JWT_SECRET}
-      - NTools__ApiUrl=http://ntools-api:8080
+      - zTools__ApiUrl=http://ztools-api:8080
     depends_on:
       postgres:
         condition: service_healthy

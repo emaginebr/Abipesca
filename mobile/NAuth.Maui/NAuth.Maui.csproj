@@ -19,7 +19,7 @@
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.100" />
 		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
 		<PackageReference Include="Microsoft.Extensions.Options" Version="10.0.0" />
-		<PackageReference Include="NAuth.ACL" Version="0.1.2-ci0014" />
+		<PackageReference Include="NAuth" Version="0.4.2" />
 	</ItemGroup>
 
 	<ItemGroup>

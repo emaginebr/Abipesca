@@ -5,8 +5,6 @@ using NAuth.DTO.Settings;
 using NAuth.Maui.Services;
 using NAuth.Maui.ViewModels;
 using NAuth.Maui.Views;
-using NNews.ACL;
-using NNews.DTO.Settings;
 using NNews.Maui.Services;
 using NNews.Maui.ViewModels;
 using NNews.Maui.Views;
@@ -62,42 +60,42 @@ namespace Abipesca.Main
                 logger.LogInformation("Fingerprint: {Fingerprint}", fingerprint);
             });
 
-            // Configure HttpClient for NNews ArticleClient with Authentication
-            builder.Services.AddHttpClient<ArticleClient>((serviceProvider, client) =>
+            // Configure HttpClient for NNews ArticleService with Authentication
+            builder.Services.AddHttpClient<ArticleService>((serviceProvider, client) =>
             {
                 var apiUrl = GetNNewsApiUrl();
-                var logger = serviceProvider.GetRequiredService<ILogger<ArticleClient>>();
-                
+                var logger = serviceProvider.GetRequiredService<ILogger<ArticleService>>();
+
                 logger.LogInformation("Configuring NNews Article API URL: {ApiUrl}", apiUrl);
-                
+
                 client.BaseAddress = new Uri(apiUrl);
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.Timeout = TimeSpan.FromSeconds(30);
             })
             .AddHttpMessageHandler<AuthenticationHandler>();
 
-            // Configure HttpClient for NNews CategoryClient with Authentication
-            builder.Services.AddHttpClient<CategoryClient>((serviceProvider, client) =>
+            // Configure HttpClient for NNews CategoryService with Authentication
+            builder.Services.AddHttpClient<CategoryService>((serviceProvider, client) =>
             {
                 var apiUrl = GetNNewsApiUrl();
-                var logger = serviceProvider.GetRequiredService<ILogger<CategoryClient>>();
-                
+                var logger = serviceProvider.GetRequiredService<ILogger<CategoryService>>();
+
                 logger.LogInformation("Configuring NNews Category API URL: {ApiUrl}", apiUrl);
-                
+
                 client.BaseAddress = new Uri(apiUrl);
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.Timeout = TimeSpan.FromSeconds(30);
             })
             .AddHttpMessageHandler<AuthenticationHandler>();
 
-            // Configure HttpClient for NNews TagClient with Authentication
-            builder.Services.AddHttpClient<TagClient>((serviceProvider, client) =>
+            // Configure HttpClient for NNews TagService with Authentication
+            builder.Services.AddHttpClient<TagService>((serviceProvider, client) =>
             {
                 var apiUrl = GetNNewsApiUrl();
-                var logger = serviceProvider.GetRequiredService<ILogger<TagClient>>();
-                
+                var logger = serviceProvider.GetRequiredService<ILogger<TagService>>();
+
                 logger.LogInformation("Configuring NNews Tag API URL: {ApiUrl}", apiUrl);
-                
+
                 client.BaseAddress = new Uri(apiUrl);
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.Timeout = TimeSpan.FromSeconds(30);
@@ -110,15 +108,14 @@ namespace Abipesca.Main
                 options.ApiUrl = GetNAuthApiUrl();
             });
 
-            // Configure NNews Settings
-            builder.Services.Configure<NNewsSetting>(options =>
-            {
-                options.ApiUrl = GetNNewsApiUrl();
-            });
-
             // Register NAuth application services
             builder.Services.AddSingleton<IAuthService, AuthService>();
             builder.Services.AddSingleton<IUserService, UserService>();
+
+            // Register NNews application services
+            builder.Services.AddSingleton<IArticleService>(sp => sp.GetRequiredService<ArticleService>());
+            builder.Services.AddSingleton<ICategoryService>(sp => sp.GetRequiredService<CategoryService>());
+            builder.Services.AddSingleton<ITagService>(sp => sp.GetRequiredService<TagService>());
 
             // Register NAuth ViewModels
             builder.Services.AddTransient<LoginViewModel>();
@@ -160,28 +157,12 @@ namespace Abipesca.Main
 
         private static string GetNAuthApiUrl()
         {
-#if ANDROID
-            return DeviceInfo.DeviceType == DeviceType.Virtual 
-                ? "http://10.0.2.2:5004" 
-                : "http://192.168.1.100:5004";
-#elif WINDOWS
-            return "http://localhost:5004";
-#else
-            return "http://localhost:5004";
-#endif
+            return "http://76.13.239.207/api/nauth";
         }
 
         private static string GetNNewsApiUrl()
         {
-#if ANDROID
-            return DeviceInfo.DeviceType == DeviceType.Virtual 
-                ? "http://10.0.2.2:5007" 
-                : "http://192.168.1.100:5007";
-#elif WINDOWS
-            return "http://localhost:5007";
-#else
-            return "http://localhost:5007";
-#endif
+            return "http://76.13.239.207/api/nnews/";
         }
 
         private static string GetUserAgent()

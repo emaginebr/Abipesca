@@ -1,4 +1,3 @@
-using NAuth.DTO;
 using NAuth.DTO.User;
 using NAuth.Maui.Services;
 using System.Windows.Input;
@@ -81,19 +80,19 @@ namespace NAuth.Maui.ViewModels
             {
                 if (string.IsNullOrWhiteSpace(Name) || Name.Length < 3)
                 {
-                    await ShowErrorAsync("Nome deve ter no mínimo 3 caracteres");
+                    await ShowErrorAsync("Nome deve ter no mï¿½nimo 3 caracteres");
                     return;
                 }
 
                 if (string.IsNullOrWhiteSpace(Email) || !IsValidEmail(Email))
                 {
-                    await ShowErrorAsync("E-mail inválido");
+                    await ShowErrorAsync("E-mail invï¿½lido");
                     return;
                 }
 
                 if (_currentUser is null)
                 {
-                    await ShowErrorAsync("Usuário não encontrado");
+                    await ShowErrorAsync("Usuï¿½rio nï¿½o encontrado");
                     return;
                 }
 

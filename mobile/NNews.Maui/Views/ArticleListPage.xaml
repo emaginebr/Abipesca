@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:NNews.Maui.ViewModels"
              xmlns:converters="clr-namespace:NNews.Maui.Converters"
-             xmlns:dtos="clr-namespace:NNews.DTO;assembly=NNews.DTO"
+             xmlns:dtos="clr-namespace:NNews.DTO;assembly=NNews"
              x:Class="NNews.Maui.Views.ArticleListPage"
              x:DataType="viewmodels:ArticleListViewModel"
              Title="{Binding Title}">

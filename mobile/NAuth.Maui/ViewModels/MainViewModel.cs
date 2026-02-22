@@ -1,4 +1,3 @@
-using NAuth.DTO;
 using NAuth.DTO.User;
 using NAuth.Maui.Services;
 using System.Windows.Input;
@@ -50,7 +49,7 @@ namespace NAuth.Maui.ViewModels
                 _currentUser = await _authService.GetCurrentUserAsync();
                 if (_currentUser is not null)
                 {
-                    UserName = _currentUser.Name ?? "Usuário";
+                    UserName = _currentUser.Name ?? "Usuï¿½rio";
                     UserEmail = _currentUser.Email ?? string.Empty;
                     UserImageUrl = _currentUser.ImageUrl ?? string.Empty;
                 }
@@ -76,7 +75,7 @@ namespace NAuth.Maui.ViewModels
                     "Logout",
                     "Deseja realmente sair?",
                     "Sim",
-                    "Não");
+                    "Nï¿½o");
             }
 
             if (confirm)

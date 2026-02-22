@@ -1,5 +1,4 @@
 using NAuth.ACL;
-using NAuth.DTO;
 using NAuth.DTO.User;
 
 namespace NAuth.Maui.Services
@@ -24,7 +23,7 @@ namespace NAuth.Maui.Services
         {
             var token = await _authService.GetTokenAsync();
             if (string.IsNullOrEmpty(token))
-                throw new UnauthorizedAccessException("Token não encontrado");
+                throw new UnauthorizedAccessException("Token nï¿½o encontrado");
 
             return await _userClient.UpdateAsync(user, token);
         }
@@ -33,7 +32,7 @@ namespace NAuth.Maui.Services
         {
             var token = await _authService.GetTokenAsync();
             if (string.IsNullOrEmpty(token))
-                throw new UnauthorizedAccessException("Token não encontrado");
+                throw new UnauthorizedAccessException("Token nï¿½o encontrado");
 
             var changeParam = new ChangePasswordParam
             {
@@ -64,7 +63,7 @@ namespace NAuth.Maui.Services
         {
             var token = await _authService.GetTokenAsync();
             if (string.IsNullOrEmpty(token))
-                throw new UnauthorizedAccessException("Token não encontrado");
+                throw new UnauthorizedAccessException("Token nï¿½o encontrado");
 
             return await _userClient.UploadImageUserAsync(imageStream, fileName, token);
         }
@@ -73,7 +72,7 @@ namespace NAuth.Maui.Services
         {
             var token = await _authService.GetTokenAsync();
             if (string.IsNullOrEmpty(token))
-                throw new UnauthorizedAccessException("Token não encontrado");
+                throw new UnauthorizedAccessException("Token nï¿½o encontrado");
 
             return await _userClient.HasPasswordAsync(token);
         }

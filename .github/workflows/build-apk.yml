@@ -1,0 +1,135 @@
+name: Build Android APK
+
+on:
+  workflow_run:
+    workflows: ["Create Release"]
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        submodules: false
+
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Install MAUI Android workload
+      run: dotnet workload install maui-android
+
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.10.2
+      with:
+        versionSpec: '5.x'
+
+    - name: Determine Version
+      id: gitversion
+      uses: gittools/actions/gitversion/execute@v0.10.2
+      with:
+        useConfigFile: true
+        configFilePath: GitVersion.yml
+
+    - name: Display version
+      run: |
+        echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
+        echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
+        echo "NuGetVersionV2: ${{ steps.gitversion.outputs.nuGetVersionV2 }}"
+
+    - name: Restore dependencies
+      run: dotnet restore mobile/Abipesca.Main/Abipesca.Main.csproj
+
+    # ============================================================
+    # SIGNING (descomente quando tiver o keystore configurado)
+    #
+    # Secrets necessarios no GitHub:
+    #   ANDROID_KEYSTORE_BASE64  - keystore .jks em base64
+    #   ANDROID_KEYSTORE_PASSWORD
+    #   ANDROID_KEY_ALIAS
+    #   ANDROID_KEY_PASSWORD
+    # ============================================================
+    # - name: Decode keystore
+    #   run: |
+    #     echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > ${{ github.workspace }}/abipesca.keystore
+    #
+    # - name: Publish Android APK (signed)
+    #   run: |
+    #     dotnet publish mobile/Abipesca.Main/Abipesca.Main.csproj \
+    #       -f net8.0-android \
+    #       -c Release \
+    #       -p:AndroidPackageFormat=apk \
+    #       -p:ApplicationDisplayVersion=${{ steps.gitversion.outputs.majorMinorPatch }} \
+    #       -p:ApplicationVersion=${{ github.run_number }} \
+    #       -p:AndroidKeyStore=true \
+    #       -p:AndroidSigningKeyStore=${{ github.workspace }}/abipesca.keystore \
+    #       -p:AndroidSigningKeyAlias=${{ secrets.ANDROID_KEY_ALIAS }} \
+    #       -p:AndroidSigningKeyPass=${{ secrets.ANDROID_KEY_PASSWORD }} \
+    #       -p:AndroidSigningStorePass=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+
+    - name: Publish Android APK
+      run: |
+        dotnet publish mobile/Abipesca.Main/Abipesca.Main.csproj \
+          -f net8.0-android \
+          -c Release \
+          -p:AndroidPackageFormat=apk \
+          -p:ApplicationDisplayVersion=${{ steps.gitversion.outputs.majorMinorPatch }} \
+          -p:ApplicationVersion=${{ github.run_number }}
+
+    - name: Find APK file
+      id: find_apk
+      run: |
+        APK_PATH=$(find mobile/Abipesca.Main/bin/Release/net8.0-android -name "*.apk" | head -1)
+        echo "APK found: $APK_PATH"
+        echo "apk_path=$APK_PATH" >> $GITHUB_OUTPUT
+
+        APK_NAME="Abipesca-v${{ steps.gitversion.outputs.majorMinorPatch }}.apk"
+        cp "$APK_PATH" "$APK_NAME"
+        echo "apk_name=$APK_NAME" >> $GITHUB_OUTPUT
+
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Abipesca-v${{ steps.gitversion.outputs.majorMinorPatch }}
+        path: ${{ steps.find_apk.outputs.apk_name }}
+        retention-days: 90
+
+    - name: Attach APK to GitHub Release
+      if: startsWith(github.ref, 'refs/tags/v')
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        TAG_NAME="${GITHUB_REF#refs/tags/}"
+        gh release upload "$TAG_NAME" "${{ steps.find_apk.outputs.apk_name }}" --clobber
+
+    - name: Attach APK to latest release (workflow_run)
+      if: github.event_name == 'workflow_run'
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        LATEST_TAG=$(git tag -l "v*" --sort=-version:refname | head -n 1)
+        if [ -n "$LATEST_TAG" ]; then
+          echo "Attaching APK to release $LATEST_TAG"
+          gh release upload "$LATEST_TAG" "${{ steps.find_apk.outputs.apk_name }}" --clobber || echo "Could not attach to release $LATEST_TAG"
+        else
+          echo "No release tag found, skipping attachment"
+        fi
+
+    - name: Summary
+      run: |
+        echo "## Android APK Built" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- **Version:** \`${{ steps.gitversion.outputs.majorMinorPatch }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "- **Build Number:** \`${{ github.run_number }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "- **APK:** \`${{ steps.find_apk.outputs.apk_name }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "- **SemVer:** \`${{ steps.gitversion.outputs.semVer }}\`" >> $GITHUB_STEP_SUMMARY

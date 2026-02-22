@@ -1,4 +1,3 @@
-using NAuth.DTO;
 using NAuth.DTO.User;
 using NAuth.Maui.Services;
 using System.Windows.Input;
@@ -69,31 +68,31 @@ namespace NAuth.Maui.ViewModels
             {
                 if (string.IsNullOrWhiteSpace(Name) || Name.Length < 3)
                 {
-                    await ShowErrorAsync("Nome deve ter no mínimo 3 caracteres");
+                    await ShowErrorAsync("Nome deve ter no mï¿½nimo 3 caracteres");
                     return;
                 }
 
                 if (string.IsNullOrWhiteSpace(Email) || !IsValidEmail(Email))
                 {
-                    await ShowErrorAsync("E-mail inválido");
+                    await ShowErrorAsync("E-mail invï¿½lido");
                     return;
                 }
 
                 if (string.IsNullOrWhiteSpace(Password) || Password.Length < 8)
                 {
-                    await ShowErrorAsync("Senha deve ter no mínimo 8 caracteres");
+                    await ShowErrorAsync("Senha deve ter no mï¿½nimo 8 caracteres");
                     return;
                 }
 
                 if (!HasLettersAndNumbers(Password))
                 {
-                    await ShowErrorAsync("Senha deve conter letras e números");
+                    await ShowErrorAsync("Senha deve conter letras e nï¿½meros");
                     return;
                 }
 
                 if (Password != ConfirmPassword)
                 {
-                    await ShowErrorAsync("As senhas não coincidem");
+                    await ShowErrorAsync("As senhas nï¿½o coincidem");
                     return;
                 }
 

@@ -1,7 +1,4 @@
-using Microsoft.Extensions.Options;
-using NNews.ACL;
 using NNews.DTO;
-using NNews.DTO.Settings;
 using NNews.Maui.Services;
 using System.Windows.Input;
 
@@ -10,9 +7,8 @@ namespace NNews.Maui.ViewModels
     [QueryProperty(nameof(ArticleId), "ArticleId")]
     public class ArticleDetailViewModel : BaseViewModel
     {
-        private readonly ArticleClient _articleClient;
+        private readonly IArticleService _articleService;
         private readonly INavigationService _navigationService;
-        private readonly string _apiUrl;
         
         private long _articleId;
         public long ArticleId
@@ -53,13 +49,11 @@ namespace NNews.Maui.ViewModels
         public ICommand BackCommand { get; }
 
         public ArticleDetailViewModel(
-            ArticleClient articleClient,
-            INavigationService navigationService,
-            IOptions<NNewsSetting> settings)
+            IArticleService articleService,
+            INavigationService navigationService)
         {
-            _articleClient = articleClient;
+            _articleService = articleService;
             _navigationService = navigationService;
-            _apiUrl = settings.Value.ApiUrl;
 
             LoadArticleCommand = new Command(async () => await LoadArticleAsync());
             ShareCommand = new Command(async () => await ShareArticleAsync());
@@ -72,7 +66,7 @@ namespace NNews.Maui.ViewModels
         {
             await ExecuteAsync(async () =>
             {
-                Article = await _articleClient.GetByIdAsync((int)ArticleId);
+                Article = await _articleService.GetByIdAsync((int)ArticleId);
                 
                 if (Article != null)
                 {
@@ -262,16 +256,7 @@ namespace NNews.Maui.ViewModels
 
         public string GetImageUrl(string? imageName)
         {
-            if (string.IsNullOrWhiteSpace(imageName))
-                return "dotnet_bot.png";
-
-            if (imageName.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
-                imageName.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
-            {
-                return imageName;
-            }
-
-            return $"{_apiUrl?.TrimEnd('/')}/images/{imageName}";
+            return _articleService.GetImageUrl(imageName);
         }
     }
 }

@@ -1,4 +1,3 @@
-using NNews.ACL;
 using NNews.DTO;
 using NNews.Maui.Services;
 using System.Collections.ObjectModel;
@@ -8,7 +7,7 @@ namespace NNews.Maui.ViewModels
 {
     public class SearchViewModel : BaseViewModel
     {
-        private readonly ArticleClient _articleClient;
+        private readonly IArticleService _articleService;
         private readonly INavigationService _navigationService;
         private CancellationTokenSource? _searchCts;
 
@@ -48,10 +47,10 @@ namespace NNews.Maui.ViewModels
         public ICommand RecentSearchSelectedCommand { get; }
 
         public SearchViewModel(
-            ArticleClient articleClient,
+            IArticleService articleService,
             INavigationService navigationService)
         {
-            _articleClient = articleClient;
+            _articleService = articleService;
             _navigationService = navigationService;
 
             SearchCommand = new Command<string>(async (query) => await SearchArticlesAsync(query));
@@ -91,7 +90,7 @@ namespace NNews.Maui.ViewModels
             try
             {
                 // Use SearchAsync to search articles by keyword
-                var result = await _articleClient.SearchAsync(
+                var result = await _articleService.SearchAsync(
                     keyword: searchText,
                     page: 1,
                     pageSize: 50);

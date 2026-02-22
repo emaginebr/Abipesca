@@ -1,7 +1,4 @@
-using Microsoft.Extensions.Options;
-using NNews.ACL;
 using NNews.DTO;
-using NNews.DTO.Settings;
 using NNews.Maui.Services;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
@@ -10,9 +7,8 @@ namespace NNews.Maui.ViewModels
 {
     public class ArticleListViewModel : BaseViewModel
     {
-        private readonly ArticleClient _articleClient;
+        private readonly IArticleService _articleService;
         private readonly INavigationService _navigationService;
-        private readonly string _apiUrl;
         private int _currentPage = 1;
         private const int PageSize = 10;
         private bool _hasMoreItems = true;
@@ -47,13 +43,11 @@ namespace NNews.Maui.ViewModels
         public ICommand ArticleSelectedCommand { get; }
 
         public ArticleListViewModel(
-            ArticleClient articleClient,
-            INavigationService navigationService,
-            IOptions<NNewsSetting> settings)
+            IArticleService articleService,
+            INavigationService navigationService)
         {
-            _articleClient = articleClient;
+            _articleService = articleService;
             _navigationService = navigationService;
-            _apiUrl = settings.Value.ApiUrl;
 
             LoadArticlesCommand = new Command(async () => await LoadArticlesAsync());
             RefreshCommand = new Command(async () => await RefreshArticlesAsync());
@@ -97,21 +91,21 @@ namespace NNews.Maui.ViewModels
                 
                 if (!string.IsNullOrEmpty(_selectedTagSlug))
                 {
-                    result = await _articleClient.ListByTagAsync(
+                    result = await _articleService.ListByTagAsync(
                         _selectedTagSlug,
                         _currentPage,
                         PageSize);
                 }
                 else if (_selectedCategoryId.HasValue && _selectedCategoryId.Value > 0)
                 {
-                    result = await _articleClient.ListByCategoryAsync(
+                    result = await _articleService.ListByCategoryAsync(
                         _selectedCategoryId.Value,
                         _currentPage,
                         PageSize);
                 }
                 else
                 {
-                    result = await _articleClient.ListByRolesAsync(
+                    result = await _articleService.ListByRolesAsync(
                         _currentPage,
                         PageSize);
                 }
@@ -138,21 +132,21 @@ namespace NNews.Maui.ViewModels
                 
                 if (!string.IsNullOrEmpty(_selectedTagSlug))
                 {
-                    result = await _articleClient.ListByTagAsync(
+                    result = await _articleService.ListByTagAsync(
                         _selectedTagSlug,
                         _currentPage,
                         PageSize);
                 }
                 else if (_selectedCategoryId.HasValue && _selectedCategoryId.Value > 0)
                 {
-                    result = await _articleClient.ListByCategoryAsync(
+                    result = await _articleService.ListByCategoryAsync(
                         _selectedCategoryId.Value,
                         _currentPage,
                         PageSize);
                 }
                 else
                 {
-                    result = await _articleClient.ListByRolesAsync(
+                    result = await _articleService.ListByRolesAsync(
                         _currentPage,
                         PageSize);
                 }
@@ -190,21 +184,21 @@ namespace NNews.Maui.ViewModels
                 
                 if (!string.IsNullOrEmpty(_selectedTagSlug))
                 {
-                    result = await _articleClient.ListByTagAsync(
+                    result = await _articleService.ListByTagAsync(
                         _selectedTagSlug,
                         _currentPage,
                         PageSize);
                 }
                 else if (_selectedCategoryId.HasValue && _selectedCategoryId.Value > 0)
                 {
-                    result = await _articleClient.ListByCategoryAsync(
+                    result = await _articleService.ListByCategoryAsync(
                         _selectedCategoryId.Value,
                         _currentPage,
                         PageSize);
                 }
                 else
                 {
-                    result = await _articleClient.ListByRolesAsync(
+                    result = await _articleService.ListByRolesAsync(
                         _currentPage,
                         PageSize);
                 }
@@ -242,16 +236,7 @@ namespace NNews.Maui.ViewModels
 
         public string GetImageUrl(string? imageName)
         {
-            if (string.IsNullOrWhiteSpace(imageName))
-                return "dotnet_bot.png";
-
-            if (imageName.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
-                imageName.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
-            {
-                return imageName;
-            }
-
-            return $"{_apiUrl?.TrimEnd('/')}/images/{imageName}";
+            return _articleService.GetImageUrl(imageName);
         }
     }
 }

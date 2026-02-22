@@ -53,7 +53,7 @@
 		
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
-		<PackageReference Include="NNews.ACL" Version="0.2.2" />
+		<PackageReference Include="NNews" Version="0.3.6" />
 	</ItemGroup>
 
 	<ItemGroup>

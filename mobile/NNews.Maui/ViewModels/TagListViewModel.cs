@@ -1,4 +1,3 @@
-using NNews.ACL;
 using NNews.DTO;
 using NNews.Maui.Services;
 using System.Collections.ObjectModel;
@@ -8,7 +7,7 @@ namespace NNews.Maui.ViewModels
 {
     public class TagListViewModel : BaseViewModel
     {
-        private readonly TagClient _tagClient;
+        private readonly ITagService _tagService;
         private readonly INavigationService _navigationService;
 
         public ObservableCollection<TagInfo> Tags { get; } = new();
@@ -18,10 +17,10 @@ namespace NNews.Maui.ViewModels
         public ICommand TagSelectedCommand { get; }
 
         public TagListViewModel(
-            TagClient tagClient,
+            ITagService tagService,
             INavigationService navigationService)
         {
-            _tagClient = tagClient;
+            _tagService = tagService;
             _navigationService = navigationService;
 
             LoadTagsCommand = new Command(async () => await LoadTagsAsync());
@@ -39,7 +38,7 @@ namespace NNews.Maui.ViewModels
             await ExecuteAsync(async () =>
             {
                 // Use ListByRolesAsync for public view filtered by user roles
-                var tags = await _tagClient.ListByRolesAsync();
+                var tags = await _tagService.ListByRolesAsync();
 
                 Tags.Clear();
                 foreach (var tag in tags.OrderByDescending(t => t.ArticleCount))
@@ -54,7 +53,7 @@ namespace NNews.Maui.ViewModels
             IsRefreshing = true;
             try
             {
-                var tags = await _tagClient.ListByRolesAsync();
+                var tags = await _tagService.ListByRolesAsync();
 
                 Tags.Clear();
                 foreach (var tag in tags.OrderByDescending(t => t.ArticleCount))

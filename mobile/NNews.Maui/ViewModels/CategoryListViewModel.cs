@@ -1,4 +1,3 @@
-using NNews.ACL;
 using NNews.DTO;
 using NNews.Maui.Services;
 using System.Collections.ObjectModel;
@@ -8,7 +7,7 @@ namespace NNews.Maui.ViewModels
 {
     public class CategoryListViewModel : BaseViewModel
     {
-        private readonly CategoryClient _categoryClient;
+        private readonly ICategoryService _categoryService;
         private readonly INavigationService _navigationService;
         private long? _parentId;
 
@@ -19,10 +18,10 @@ namespace NNews.Maui.ViewModels
         public ICommand CategorySelectedCommand { get; }
 
         public CategoryListViewModel(
-            CategoryClient categoryClient,
+            ICategoryService categoryService,
             INavigationService navigationService)
         {
-            _categoryClient = categoryClient;
+            _categoryService = categoryService;
             _navigationService = navigationService;
 
             LoadCategoriesCommand = new Command(async () => await LoadCategoriesAsync());
@@ -41,7 +40,7 @@ namespace NNews.Maui.ViewModels
             await ExecuteAsync(async () =>
             {
                 // Use ListByParentAsync for public view filtered by roles
-                var categories = await _categoryClient.ListByParentAsync(_parentId);
+                var categories = await _categoryService.ListByParentAsync(_parentId);
 
                 Categories.Clear();
                 foreach (var category in categories)
@@ -56,7 +55,7 @@ namespace NNews.Maui.ViewModels
             IsRefreshing = true;
             try
             {
-                var categories = await _categoryClient.ListByParentAsync(_parentId);
+                var categories = await _categoryService.ListByParentAsync(_parentId);
 
                 Categories.Clear();
                 foreach (var category in categories)

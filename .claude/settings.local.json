@@ -38,7 +38,10 @@
       "Bash(git push:*)",
       "Bash(git remote set-url:*)",
       "Bash(docker ps:*)",
-      "Bash(docker.exe ps:*)"
+      "Bash(docker.exe ps:*)",
+      "WebFetch(domain:www.nuget.org)",
+      "Bash(dotnet restore:*)",
+      "Bash(dotnet build:*)"
     ]
   }
 }

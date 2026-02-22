@@ -28,18 +28,18 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
-      env:
-        DOTNET_INSTALL_DIR: /usr/share/dotnet
 
-    - name: Force .NET 8 SDK
+    - name: Verify .NET SDK
+      working-directory: mobile
       run: |
         echo "Installed SDKs:"
         dotnet --list-sdks
         echo ""
-        echo "Active SDK (from mobile/global.json):"
-        cd mobile && dotnet --version
+        echo "Active SDK (from global.json):"
+        dotnet --version
 
     - name: Install MAUI Android workload
+      working-directory: mobile
       run: dotnet workload install maui-android --source https://api.nuget.org/v3/index.json
 
     - name: Install GitVersion

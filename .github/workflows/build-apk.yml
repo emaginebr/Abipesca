@@ -128,17 +128,17 @@ jobs:
         TAG_NAME="${GITHUB_REF#refs/tags/}"
         gh release upload "$TAG_NAME" "${{ steps.find_apk.outputs.apk_name }}" --clobber
 
-    - name: Attach APK to latest release (workflow_run)
-      if: github.event_name == 'workflow_run'
+    - name: Attach APK to latest release
+      if: github.event_name == 'workflow_run' || github.event_name == 'workflow_dispatch'
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        LATEST_TAG=$(git tag -l "v*" --sort=-version:refname | head -n 1)
-        if [ -n "$LATEST_TAG" ]; then
-          echo "Attaching APK to release $LATEST_TAG"
-          gh release upload "$LATEST_TAG" "${{ steps.find_apk.outputs.apk_name }}" --clobber || echo "Could not attach to release $LATEST_TAG"
+        LATEST_RELEASE=$(gh release list --limit 1 --json tagName --jq '.[0].tagName' 2>/dev/null || echo "")
+        if [ -n "$LATEST_RELEASE" ]; then
+          echo "Attaching APK to release $LATEST_RELEASE"
+          gh release upload "$LATEST_RELEASE" "${{ steps.find_apk.outputs.apk_name }}" --clobber
         else
-          echo "No release tag found, skipping attachment"
+          echo "No GitHub Release found, APK available as artifact only"
         fi
 
     - name: Summary

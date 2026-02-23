@@ -57,7 +57,6 @@ jobs:
     - name: Display version
       run: |
         echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
-        echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
         echo "NuGetVersionV2: ${{ steps.gitversion.outputs.nuGetVersionV2 }}"
 
     - name: Restore dependencies
@@ -84,7 +83,7 @@ jobs:
     #       -f net8.0-android \
     #       -c Release \
     #       -p:AndroidPackageFormat=apk \
-    #       -p:ApplicationDisplayVersion=${{ steps.gitversion.outputs.majorMinorPatch }} \
+    #       -p:ApplicationDisplayVersion=${{ steps.gitversion.outputs.nuGetVersionV2 }} \
     #       -p:ApplicationVersion=${{ github.run_number }} \
     #       -p:AndroidKeyStore=true \
     #       -p:AndroidSigningKeyStore=${{ github.workspace }}/abipesca.keystore \
@@ -99,7 +98,7 @@ jobs:
           -f net8.0-android \
           -c Release \
           -p:AndroidPackageFormat=apk \
-          -p:ApplicationDisplayVersion=${{ steps.gitversion.outputs.majorMinorPatch }} \
+          -p:ApplicationDisplayVersion=${{ steps.gitversion.outputs.nuGetVersionV2 }} \
           -p:ApplicationVersion=${{ github.run_number }}
 
     - name: Find APK file
@@ -109,14 +108,14 @@ jobs:
         echo "APK found: $APK_PATH"
         echo "apk_path=$APK_PATH" >> $GITHUB_OUTPUT
 
-        APK_NAME="Abipesca-v${{ steps.gitversion.outputs.majorMinorPatch }}.apk"
+        APK_NAME="Abipesca-v${{ steps.gitversion.outputs.nuGetVersionV2 }}.apk"
         cp "$APK_PATH" "$APK_NAME"
         echo "apk_name=$APK_NAME" >> $GITHUB_OUTPUT
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Abipesca-v${{ steps.gitversion.outputs.majorMinorPatch }}
+        name: Abipesca-v${{ steps.gitversion.outputs.nuGetVersionV2 }}
         path: ${{ steps.find_apk.outputs.apk_name }}
         retention-days: 90
 
@@ -145,7 +144,7 @@ jobs:
       run: |
         echo "## Android APK Built" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "- **Version:** \`${{ steps.gitversion.outputs.majorMinorPatch }}\`" >> $GITHUB_STEP_SUMMARY
+        echo "- **Version:** \`${{ steps.gitversion.outputs.nuGetVersionV2 }}\`" >> $GITHUB_STEP_SUMMARY
         echo "- **Build Number:** \`${{ github.run_number }}\`" >> $GITHUB_STEP_SUMMARY
         echo "- **APK:** \`${{ steps.find_apk.outputs.apk_name }}\`" >> $GITHUB_STEP_SUMMARY
         echo "- **SemVer:** \`${{ steps.gitversion.outputs.semVer }}\`" >> $GITHUB_STEP_SUMMARY

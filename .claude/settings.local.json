@@ -41,7 +41,8 @@
       "Bash(docker.exe ps:*)",
       "WebFetch(domain:www.nuget.org)",
       "Bash(dotnet restore:*)",
-      "Bash(dotnet build:*)"
+      "Bash(dotnet build:*)",
+      "Bash(python -c:*)"
     ]
   }
 }

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Abipesca Feature Graphic - Google Play Store Banner 1024x500 -->
+<svg width="1024" height="500" viewBox="0 0 1024 500" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#203e64;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0693e3;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Fundo gradiente navy → blue -->
+  <rect x="0" y="0" width="1024" height="500" fill="url(#bgGradient)" />
+
+  <!-- Peixes centralizados -->
+  <g transform="translate(362, 60) scale(4.5)">
+    <!-- Peixe superior (branco semi-transparente) -->
+    <path d="M 7,21 C 13,9 27,5 37,9 C 47,13 55,19 61,17 C 57,21 49,23 41,21 C 33,19 21,25 7,21 Z"
+          fill="#FFFFFF" opacity="0.95" />
+    <path d="M 7,21 C 3,17 1,13 3,9 C 5,13 7,17 7,21 Z"
+          fill="#FFFFFF" opacity="0.95" />
+
+    <!-- Peixe inferior (laranja) -->
+    <path d="M 59,41 C 53,53 39,57 29,53 C 19,49 11,43 5,45 C 9,41 17,39 25,41 C 33,43 45,37 59,41 Z"
+          fill="#ff6900" opacity="0.9" />
+    <path d="M 59,41 C 63,45 65,49 63,53 C 61,49 59,45 59,41 Z"
+          fill="#ff6900" opacity="0.9" />
+
+    <!-- Olhos -->
+    <circle cx="49" cy="15" r="2" fill="#203e64" />
+    <circle cx="17" cy="47" r="2" fill="#203e64" />
+  </g>
+
+  <!-- Texto ABIPESCA -->
+  <text x="512" y="400" text-anchor="middle"
+        font-family="'Open Sans', 'Segoe UI', Arial, sans-serif"
+        font-weight="700" font-size="64" fill="#FFFFFF" letter-spacing="6">
+    ABIPESCA
+  </text>
+
+  <!-- Subtitulo -->
+  <text x="512" y="450" text-anchor="middle"
+        font-family="'Open Sans', 'Segoe UI', Arial, sans-serif"
+        font-weight="400" font-size="24" fill="#FFFFFF" opacity="0.8">
+    Associação Brasileira da Indústria de Pesca
+  </text>
+</svg>

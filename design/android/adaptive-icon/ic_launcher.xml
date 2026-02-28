@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Exemplo de icone adaptativo Android (Android 8.0+, API 26+)
+
+    Este arquivo demonstra como configurar um icone adaptativo
+    que usa layers separados de foreground e background.
+
+    Para usar no projeto MAUI, copie os PNGs das pastas mipmap-*
+    para os respectivos diretorios em:
+    Mobile/Abipesca.Main/Platforms/Android/Resources/mipmap-*/
+
+    Ou configure diretamente no .csproj do MAUI:
+    <MauiIcon Include="Resources\AppIcon\appicon.svg"
+              ForegroundFile="Resources\AppIcon\appiconfg.svg"
+              Color="#203e64" />
+-->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@mipmap/appicon_background" />
+    <foreground android:drawable="@mipmap/appicon_foreground" />
+</adaptive-icon>
